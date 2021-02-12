@@ -39,7 +39,7 @@
         private ConcurrentDictionary<long, Subscriber> _subscribers;
 
         /// <summary>
-        /// Subscribers storage file path;
+        /// Subscribers storage file path.
         /// </summary>
         private string _storageFilePath;
 

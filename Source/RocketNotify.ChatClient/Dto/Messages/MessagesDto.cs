@@ -18,7 +18,7 @@
         /// </summary>
         [JsonPropertyName("total")]
         public int TotalMessages { get; set; }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether the request was completed successfully.
         /// </summary>

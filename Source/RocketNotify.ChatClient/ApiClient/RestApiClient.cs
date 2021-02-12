@@ -114,7 +114,6 @@
         /// </summary>
         /// <param name="userName">Username.</param>
         /// <param name="password">Password.</param>
-        /// <param name="server">Rocket.Chat server host.</param>
         /// <returns><c>true</c> if authentication succeeded, <c>false</c> otherwise.</returns>
         private Task<bool> TryLoginAsync(string userName, string password)
         {
@@ -157,7 +156,8 @@
         /// <param name="url">Request URL.</param>
         /// <param name="jsonData">Request JSON body.</param>
         /// <returns>Response object.</returns>
-        private async Task<TResult> PostAsync<TResult>(string url, string jsonData) where TResult : class, new()
+        private async Task<TResult> PostAsync<TResult>(string url, string jsonData)
+            where TResult : class, new()
         {
             using var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             using var response = await _httpClient.PostAsync(url, content).ConfigureAwait(false);
@@ -170,7 +170,8 @@
         /// <typeparam name="TResult">Assumed type of response.</typeparam>
         /// <param name="message">Request message instance.</param>
         /// <returns>Responce object.</returns>
-        private async Task<TResult> SendAsync<TResult>(HttpRequestMessage message) where TResult : class, new()
+        private async Task<TResult> SendAsync<TResult>(HttpRequestMessage message)
+            where TResult : class, new()
         {
             using var response = await _httpClient.SendAsync(message, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
             return await ProcessResponseAsync<TResult>(response).ConfigureAwait(false);
@@ -182,7 +183,8 @@
         /// <typeparam name="TResult">Type of response content.</typeparam>
         /// <param name="response">Response to a request.</param>
         /// <returns>Response content.</returns>
-        private async Task<TResult> ProcessResponseAsync<TResult>(HttpResponseMessage response) where TResult : class, new()
+        private async Task<TResult> ProcessResponseAsync<TResult>(HttpResponseMessage response)
+            where TResult : class, new()
         {
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
