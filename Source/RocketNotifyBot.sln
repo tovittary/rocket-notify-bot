@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotifyBot", "RocketNotifyBot\RocketNotifyBot.csproj", "{0BB32976-9AF4-4DA2-990E-DAD7EDBAFBEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.TelegramBot", "RocketNotify.TelegramBot\RocketNotify.TelegramBot.csproj", "{F57DC633-0473-441E-9474-15A217AF5146}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.Subscription", "RocketNotify.Subscription\RocketNotify.Subscription.csproj", "{D5A03821-5D77-4E4A-8D36-A9A3D3645DC9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.Notifier", "RocketNotify.Notifier\RocketNotify.Notifier.csproj", "{52E9B12E-EE4E-47A8-B36A-3B545F98D2F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.ChatClient", "RocketNotify.ChatClient\RocketNotify.ChatClient.csproj", "{42470B57-405C-4053-A8E9-1D788827B05D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BB32976-9AF4-4DA2-990E-DAD7EDBAFBEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB32976-9AF4-4DA2-990E-DAD7EDBAFBEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB32976-9AF4-4DA2-990E-DAD7EDBAFBEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB32976-9AF4-4DA2-990E-DAD7EDBAFBEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57DC633-0473-441E-9474-15A217AF5146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57DC633-0473-441E-9474-15A217AF5146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57DC633-0473-441E-9474-15A217AF5146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57DC633-0473-441E-9474-15A217AF5146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5A03821-5D77-4E4A-8D36-A9A3D3645DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5A03821-5D77-4E4A-8D36-A9A3D3645DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5A03821-5D77-4E4A-8D36-A9A3D3645DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5A03821-5D77-4E4A-8D36-A9A3D3645DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E9B12E-EE4E-47A8-B36A-3B545F98D2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E9B12E-EE4E-47A8-B36A-3B545F98D2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E9B12E-EE4E-47A8-B36A-3B545F98D2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E9B12E-EE4E-47A8-B36A-3B545F98D2F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42470B57-405C-4053-A8E9-1D788827B05D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42470B57-405C-4053-A8E9-1D788827B05D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42470B57-405C-4053-A8E9-1D788827B05D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42470B57-405C-4053-A8E9-1D788827B05D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B5F15EBA-DC84-4519-A68C-8CA6519B3E28}
+	EndGlobalSection
+EndGlobal

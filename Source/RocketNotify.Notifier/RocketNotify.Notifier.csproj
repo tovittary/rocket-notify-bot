@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\..\Build\$(Configuration)\$(Platform)</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RocketNotify.ChatClient\RocketNotify.ChatClient.csproj" />
+    <ProjectReference Include="..\RocketNotify.TelegramBot\RocketNotify.TelegramBot.csproj" />
+  </ItemGroup>
+
+</Project>

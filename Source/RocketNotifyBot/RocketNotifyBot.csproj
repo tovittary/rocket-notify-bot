@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\..\Build\$(Configuration)\$(Platform)</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RocketNotify.ChatClient\RocketNotify.ChatClient.csproj" />
+    <ProjectReference Include="..\RocketNotify.Notifier\RocketNotify.Notifier.csproj" />
+    <ProjectReference Include="..\RocketNotify.TelegramBot\RocketNotify.TelegramBot.csproj" />
+    <ProjectReference Include="..\RocketNotify.Subscription\RocketNotify.Subscription.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
