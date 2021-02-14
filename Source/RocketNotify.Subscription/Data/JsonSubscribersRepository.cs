@@ -1,14 +1,8 @@
 ﻿namespace RocketNotify.Subscription.Data
 {
-    using System;
     using System.Collections.Concurrent;
-    using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
-
-    using Microsoft.Extensions.Configuration;
 
     using RocketNotify.Subscription.Exceptions;
     using RocketNotify.Subscription.Model;
@@ -19,14 +13,9 @@
     public class JsonSubscribersRepository : ISubscribersRepository
     {
         /// <summary>
-        /// The name of the subscribers storage file.
+        /// Subscribers data storage.
         /// </summary>
-        private const string StorageFileName = "subscribers.rnb";
-
-        /// <summary>
-        /// Application settings.
-        /// </summary>
-        private readonly IConfiguration _configuration;
+        private readonly IFileStorage _storage;
 
         /// <summary>
         /// A value indicating whether the repository has been initialized.
@@ -39,17 +28,12 @@
         private ConcurrentDictionary<long, Subscriber> _subscribers;
 
         /// <summary>
-        /// Subscribers storage file path.
-        /// </summary>
-        private string _storageFilePath;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="JsonSubscribersRepository" /> class.
         /// </summary>
-        /// <param name="configuration">Application settings.</param>
-        public JsonSubscribersRepository(IConfiguration configuration)
+        /// <param name="storage">Subscribers data storage.</param>
+        public JsonSubscribersRepository(IFileStorage storage)
         {
-            _configuration = configuration;
+            _storage = storage;
         }
 
         /// <inheritdoc />
@@ -66,7 +50,7 @@
             if (!subscriberAdded)
                 throw new SubscriberOperationException($"There was an error while attempting to create subscriber (chatId = {chatId})");
 
-            SaveSubsToFile();
+            _storage.SaveSubscribersData(_subscribers.Values);
         }
 
         /// <inheritdoc />
@@ -81,7 +65,7 @@
             if (!subscriberRemoved)
                 throw new SubscriberOperationException($"There was an error while attempting to delete subscriber with chatId = {chatId}");
 
-            SaveSubsToFile();
+            _storage.SaveSubscribersData(_subscribers.Values);
         }
 
         /// <inheritdoc />
@@ -100,35 +84,13 @@
             if (_initialized)
                 return;
 
-            var storageFolder = _configuration.GetSection("Model")?["StorageFolder"];
-            if (string.IsNullOrWhiteSpace(storageFolder))
-                throw new InvalidOperationException("The storage folder path cannot be empty (Model:StorageFolder). Check the appsettings.json file.");
+            _storage.Initialize();
 
-            _storageFilePath = Path.Combine(storageFolder, StorageFileName);
-            if (!File.Exists(_storageFilePath))
-            {
-                _subscribers = new ConcurrentDictionary<long, Subscriber>();
-                _initialized = true;
+            var subscribers = await _storage.LoadSubscribersDataAsync().ConfigureAwait(false);
+            var subscribesrDictionary = subscribers.ToDictionary(s => s.ChatId);
 
-                return;
-            }
-
-            var fileContents = await File.ReadAllTextAsync(_storageFilePath).ConfigureAwait(false);
-            var subs = JsonSerializer.Deserialize<Subscriber[]>(fileContents).ToDictionary(sub => sub.ChatId);
-
-            _subscribers = new ConcurrentDictionary<long, Subscriber>(subs);
+            _subscribers = new ConcurrentDictionary<long, Subscriber>();
             _initialized = true;
-        }
-
-        /// <summary>
-        /// Saves subscribers data to the storage file.
-        /// </summary>
-        private void SaveSubsToFile()
-        {
-            var serialized = JsonSerializer.Serialize(_subscribers.Values, new JsonSerializerOptions { WriteIndented = true });
-
-            lock (_subscribers)
-                File.WriteAllText(_storageFilePath, serialized, Encoding.UTF8);
         }
     }
 }

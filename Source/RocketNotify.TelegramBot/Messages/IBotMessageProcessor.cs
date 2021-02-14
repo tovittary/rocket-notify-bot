@@ -1,6 +1,8 @@
-﻿namespace RocketNotify.TelegramBot.Interfaces
+﻿namespace RocketNotify.TelegramBot.Messages
 {
     using System.Threading.Tasks;
+
+    using RocketNotify.TelegramBot.Client;
 
     using Telegram.Bot.Types;
 

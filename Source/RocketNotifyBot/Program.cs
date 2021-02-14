@@ -14,9 +14,10 @@
     using RocketNotify.Notifier;
     using RocketNotify.Subscription.Data;
     using RocketNotify.Subscription.Services;
-    using RocketNotify.TelegramBot;
+    using RocketNotify.TelegramBot.Client;
+    using RocketNotify.TelegramBot.Client.Factory;
     using RocketNotify.TelegramBot.Commands;
-    using RocketNotify.TelegramBot.Interfaces;
+    using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Settings;
 
     /// <summary>
@@ -81,7 +82,8 @@
         /// <param name="services">Registered services.</param>
         private static void RegisterAllServices(IServiceCollection services)
         {
-            services.AddSingleton<ISubscribersRepository, JsonSubscribersRepository>();
+            services.AddSingleton<IFileStorage, JsonFileStorage>();
+            services.AddTransient<ISubscribersRepository, JsonSubscribersRepository>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
 
             services.AddTransient<ICommand, HelpCommand>();
@@ -90,6 +92,7 @@
             services.AddTransient<ICommand, UnsubscribeCommand>();
 
             services.AddTransient<IBotSettingsProvider, BotSettingsProvider>();
+            services.AddTransient<ITelegramBotClientFactory, TelegramBotClientFactory>();
             services.AddTransient<IBotMessageProcessor, BotMessageProcessor>();
             services.AddSingleton<ITelegramBotPollingClient, TelegramBotPollingClient>();
             services.AddSingleton<ITelegramBotMessageSender>(srv => srv.GetRequiredService<ITelegramBotPollingClient>());

@@ -1,4 +1,4 @@
-﻿namespace RocketNotify.TelegramBot.Interfaces
+﻿namespace RocketNotify.TelegramBot.Client
 {
     using System;
     using System.Threading;

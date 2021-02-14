@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides necessary operations of the system HttpClient class.
+    /// Provides necessary operations of the <see cref="HttpClient"/> class.
     /// </summary>
     public interface IHttpClientWrapper : IDisposable
     {

@@ -1,11 +1,11 @@
-﻿namespace RocketNotify.TelegramBot
+﻿namespace RocketNotify.TelegramBot.Client
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using RocketNotify.TelegramBot.Interfaces;
-    using RocketNotify.TelegramBot.Settings;
+    using RocketNotify.TelegramBot.Client.Factory;
+    using RocketNotify.TelegramBot.Messages;
 
     using Telegram.Bot;
     using Telegram.Bot.Args;
@@ -21,9 +21,9 @@
         private readonly IBotMessageProcessor _messageProcessor;
 
         /// <summary>
-        /// Telegram bot settings provider.
+        /// Factory for getting the <see cref="ITelegramBotClient"/> interface implementations.
         /// </summary>
-        private readonly IBotSettingsProvider _settingsProvider;
+        private readonly ITelegramBotClientFactory _botClientFactory;
 
         /// <summary>
         /// The underlying telegram bot client.
@@ -39,11 +39,11 @@
         /// Initializes a new instance of the <see cref="TelegramBotPollingClient" /> class.
         /// </summary>
         /// <param name="messageProcessor">Bot messages processing module.</param>
-        /// <param name="settingsProvider">Telegram bot settings provider.</param>
-        public TelegramBotPollingClient(IBotMessageProcessor messageProcessor, IBotSettingsProvider settingsProvider)
+        /// <param name="botClientFactory">Factory for getting the <see cref="ITelegramBotClient"/> interface implementations.</param>
+        public TelegramBotPollingClient(IBotMessageProcessor messageProcessor, ITelegramBotClientFactory botClientFactory)
         {
             _messageProcessor = messageProcessor;
-            _settingsProvider = settingsProvider;
+            _botClientFactory = botClientFactory;
         }
 
         /// <summary>
@@ -67,11 +67,7 @@
             if (_client != null)
                 throw new InvalidOperationException("The client already initialized.");
 
-            var authToken = _settingsProvider.GetAuthToken();
-            if (string.IsNullOrEmpty(authToken))
-                throw new InvalidOperationException("Telegram bot AuthToken cannot be empty. Check the appsettings.json file.");
-
-            _client = new TelegramBotClient(authToken);
+            _client = _botClientFactory.GetClient();
         }
 
         /// <inheritdoc />

@@ -8,7 +8,7 @@
 
     using RocketNotify.ChatClient;
     using RocketNotify.Subscription.Services;
-    using RocketNotify.TelegramBot.Interfaces;
+    using RocketNotify.TelegramBot.Client;
 
     /// <summary>
     /// Messages notification service.

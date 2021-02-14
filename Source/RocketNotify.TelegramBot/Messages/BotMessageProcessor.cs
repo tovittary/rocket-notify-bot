@@ -1,4 +1,4 @@
-﻿namespace RocketNotify.TelegramBot
+﻿namespace RocketNotify.TelegramBot.Messages
 {
     using System;
     using System.Collections.Generic;
@@ -7,8 +7,8 @@
 
     using Microsoft.Extensions.Logging;
 
+    using RocketNotify.TelegramBot.Client;
     using RocketNotify.TelegramBot.Commands;
-    using RocketNotify.TelegramBot.Interfaces;
 
     using Telegram.Bot.Types;
 
