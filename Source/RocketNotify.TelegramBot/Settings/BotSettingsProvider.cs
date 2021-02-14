@@ -26,5 +26,15 @@
         {
             return _configuration.GetSection("Telegram")?["AuthToken"] ?? string.Empty;
         }
+
+        /// <inheritdoc/>
+        public string GetBotUserName()
+        {
+            var botName = _configuration.GetSection("Telegram")?["BotName"] ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(botName) && !botName.StartsWith('@'))
+                botName = $"@{botName}";
+
+            return botName;
+        }
     }
 }

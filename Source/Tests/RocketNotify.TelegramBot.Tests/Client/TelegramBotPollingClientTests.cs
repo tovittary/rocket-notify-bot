@@ -19,7 +19,7 @@
     [TestFixture]
     public class TelegramBotPollingClientTests
     {
-        private Mock<IBotMessageProcessor> _messageProcessorMock;
+        private Mock<IBotMessageHandler> _messageHandlerMock;
 
         private Mock<ITelegramBotClientFactory> _botClientFactoryMock;
 
@@ -30,13 +30,13 @@
         [SetUp]
         public void SetUp()
         {
-            _messageProcessorMock = new Mock<IBotMessageProcessor>();
+            _messageHandlerMock = new Mock<IBotMessageHandler>();
             _botClientMock = new Mock<ITelegramBotClient>();
 
             _botClientFactoryMock = new Mock<ITelegramBotClientFactory>();
             _botClientFactoryMock.Setup(x => x.GetClient()).Returns(_botClientMock.Object);
 
-            _client = new TelegramBotPollingClient(_messageProcessorMock.Object, _botClientFactoryMock.Object);
+            _client = new TelegramBotPollingClient(_messageHandlerMock.Object, _botClientFactoryMock.Object);
         }
 
         [Test]

@@ -43,7 +43,7 @@
         /// <inheritdoc />
         public void Initialize()
         {
-            var storageFolder = _configuration.GetSection("Model")?["StorageFolder"];
+            var storageFolder = _configuration.GetSection("Subscriptions")?["StorageFolder"];
             if (string.IsNullOrWhiteSpace(storageFolder))
                 throw new InvalidOperationException("The storage folder path cannot be empty (Model:StorageFolder). Check the appsettings.json file.");
 

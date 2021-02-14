@@ -10,5 +10,11 @@
         /// </summary>
         /// <returns>The bot auth token.</returns>
         string GetAuthToken();
+
+        /// <summary>
+        /// Gets the bot username, by which he is addressed in chats.
+        /// </summary>
+        /// <returns>The bot username.</returns>
+        string GetBotUserName();
     }
 }

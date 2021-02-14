@@ -16,9 +16,9 @@
     public class TelegramBotPollingClient : ITelegramBotPollingClient
     {
         /// <summary>
-        /// Bot messages processing module.
+        /// Handles the event of a message received by the bot.
         /// </summary>
-        private readonly IBotMessageProcessor _messageProcessor;
+        private readonly IBotMessageHandler _messageHandler;
 
         /// <summary>
         /// Factory for getting the <see cref="ITelegramBotClient"/> interface implementations.
@@ -38,11 +38,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="TelegramBotPollingClient" /> class.
         /// </summary>
-        /// <param name="messageProcessor">Bot messages processing module.</param>
+        /// <param name="messageHandler">Handles the event of a message received by the bot.</param>
         /// <param name="botClientFactory">Factory for getting the <see cref="ITelegramBotClient"/> interface implementations.</param>
-        public TelegramBotPollingClient(IBotMessageProcessor messageProcessor, ITelegramBotClientFactory botClientFactory)
+        public TelegramBotPollingClient(IBotMessageHandler messageHandler, ITelegramBotClientFactory botClientFactory)
         {
-            _messageProcessor = messageProcessor;
+            _messageHandler = messageHandler;
             _botClientFactory = botClientFactory;
         }
 
@@ -122,6 +122,6 @@
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
         private void ProcessMessageAsync(object sender, MessageEventArgs e) =>
-            _messageProcessor.ProcessMessageAsync(e.Message, this);
+            _messageHandler.HandleAsync(e.Message, this);
     }
 }

@@ -87,9 +87,9 @@
             _storage.Initialize();
 
             var subscribers = await _storage.LoadSubscribersDataAsync().ConfigureAwait(false);
-            var subscribesrDictionary = subscribers.ToDictionary(s => s.ChatId);
+            var subscribersDictionary = subscribers.ToDictionary(s => s.ChatId);
 
-            _subscribers = new ConcurrentDictionary<long, Subscriber>();
+            _subscribers = new ConcurrentDictionary<long, Subscriber>(subscribersDictionary);
             _initialized = true;
         }
     }
