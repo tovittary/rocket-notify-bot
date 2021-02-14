@@ -12,11 +12,16 @@
     public interface IRestApiClient : IDisposable
     {
         /// <summary>
+        /// Gets authorization data for sending API requests.
+        /// </summary>
+        AuthorizationData AuthData { get; }
+
+        /// <summary>
         /// Authenticates on the Rocket.Chat server.
         /// </summary>
         /// <param name="server">Rocket.Chat server host.</param>
         /// <param name="authData">Authentication data.</param>
-        /// <returns>A task that represents an authentication process.</returns>
+        /// <returns>The task object that represents the authentication process.</returns>
         Task AuthenticateAsync(string server, AuthenticationData authData);
 
         /// <summary>

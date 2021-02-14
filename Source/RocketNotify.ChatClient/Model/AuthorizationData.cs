@@ -6,13 +6,24 @@
     public class AuthorizationData
     {
         /// <summary>
-        /// Gets or sets the user identifier.
+        /// Initializes a new instance of the <see cref="AuthorizationData"/> class.
         /// </summary>
-        public string UserId { get; set; }
+        /// <param name="userId">User identifier.</param>
+        /// <param name="authToken">Authorization token.</param>
+        public AuthorizationData(string userId, string authToken)
+        {
+            UserId = userId;
+            AuthToken = authToken;
+        }
 
         /// <summary>
-        /// Gets or sets the user authorization token.
+        /// Gets the user identifier.
         /// </summary>
-        public string AuthToken { get; set; }
+        public string UserId { get; }
+
+        /// <summary>
+        /// Gets the user authorization token.
+        /// </summary>
+        public string AuthToken { get; }
     }
 }

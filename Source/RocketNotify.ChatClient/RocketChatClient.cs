@@ -47,6 +47,12 @@
                 AuthToken = _settingsProvider.GetAuthToken()
             };
 
+            var authDataValid = !string.IsNullOrEmpty(authenticationData.AuthToken)
+                || (!string.IsNullOrEmpty(authenticationData.User) && !string.IsNullOrEmpty(authenticationData.Password));
+
+            if (!authDataValid)
+                throw new InvalidOperationException("Either AuthToken or both UserName and Password must be provided.");
+
             return _restApiClient.AuthenticateAsync(serverHost, authenticationData);
         }
 

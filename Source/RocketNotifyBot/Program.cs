@@ -95,6 +95,7 @@
             services.AddSingleton<ITelegramBotMessageSender>(srv => srv.GetRequiredService<ITelegramBotPollingClient>());
 
             services.AddTransient<IClientSettingsProvider, ClientSettingsProvider>();
+            services.AddHttpClient<IHttpClientWrapper, HttpClientWrapper>();
             services.AddTransient<IRestApiClient, RestApiClient>();
             services.AddTransient<IRocketChatClient, RocketChatClient>();
 
