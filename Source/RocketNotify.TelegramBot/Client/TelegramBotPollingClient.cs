@@ -11,7 +11,7 @@
     using Telegram.Bot.Args;
 
     /// <summary>
-    /// Telegram bot client using a polling mechanism o receive messages.
+    /// Telegram bot client using a polling mechanism to receive messages.
     /// </summary>
     public class TelegramBotPollingClient : ITelegramBotPollingClient
     {
@@ -31,11 +31,6 @@
         private ITelegramBotClient _client;
 
         /// <summary>
-        /// Messages polling process cancellation token.
-        /// </summary>
-        private CancellationToken _token;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TelegramBotPollingClient" /> class.
         /// </summary>
         /// <param name="messageHandler">Handles the event of a message received by the bot.</param>
@@ -46,28 +41,16 @@
             _botClientFactory = botClientFactory;
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="TelegramBotPollingClient" /> class.
-        /// </summary>
-        ~TelegramBotPollingClient()
-        {
-            Dispose(false);
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         /// <inheritdoc />
         public void Initialize()
         {
-            if (_client != null)
-                throw new InvalidOperationException("The client already initialized.");
+            lock (_botClientFactory)
+            {
+                if (_client != null)
+                    return;
 
-            _client = _botClientFactory.GetClient();
+                _client = _botClientFactory.GetClient();
+            }
         }
 
         /// <inheritdoc />
@@ -76,7 +59,6 @@
             if (_client == null)
                 throw new InvalidOperationException("The client is not yet initialized.");
 
-            _token = token;
             _client.OnMessage += ProcessMessageAsync;
             _client.StartReceiving(cancellationToken: token);
         }
@@ -90,7 +72,6 @@
             if (_client.IsReceiving)
                 _client.StopReceiving();
 
-            _token = CancellationToken.None;
             _client.OnMessage -= ProcessMessageAsync;
         }
 
@@ -100,20 +81,7 @@
             if (_client == null)
                 throw new InvalidOperationException("The client is not yet initialized.");
 
-            return _client.SendTextMessageAsync(chatId, text, cancellationToken: _token);
-        }
-
-        /// <summary>
-        /// Releases unmanaged and managed resources.
-        /// </summary>
-        /// <param name="isDisposing">Specifies whether to release managed resources.</param>
-        protected void Dispose(bool isDisposing)
-        {
-            if (!isDisposing)
-                return;
-
-            if (_client != null)
-                StopPolling();
+            return _client.SendTextMessageAsync(chatId, text);
         }
 
         /// <summary>

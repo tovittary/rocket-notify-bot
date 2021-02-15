@@ -1,6 +1,5 @@
 ﻿namespace RocketNotify.ChatClient.ApiClient
 {
-    using System;
     using System.Threading.Tasks;
 
     using RocketNotify.ChatClient.Dto.Messages;
@@ -9,7 +8,7 @@
     /// <summary>
     /// Provides functionality for Rocket.Chat REST API access.
     /// </summary>
-    public interface IRestApiClient : IDisposable
+    public interface IRestApiClient
     {
         /// <summary>
         /// Gets authorization data for sending API requests.

@@ -23,27 +23,11 @@
             _httpClient = httpClient;
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="HttpClientWrapper"/> class.
-        /// </summary>
-        ~HttpClientWrapper()
-        {
-            Dispose(false);
-        }
-
         /// <inheritdoc/>
         public Uri BaseAddress
         {
             get => _httpClient.BaseAddress;
             set => _httpClient.BaseAddress = value;
-        }
-
-        /// <inheritdoc />
-        /// TODO Check whether we need dispose mehtod in this class now when http client is provided through dependecy injection.
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(true);
         }
 
         /// <inheritdoc />
@@ -53,15 +37,5 @@
         /// <inheritdoc />
         public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption) =>
             _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-        /// <summary>
-        /// Releases unmanaged and managed resources.
-        /// </summary>
-        /// <param name="isDisposing">Specifies whether to release managed resources.</param>
-        private void Dispose(bool isDisposing)
-        {
-            if (isDisposing)
-                _httpClient?.Dispose();
-        }
     }
 }

@@ -7,7 +7,7 @@
     /// <summary>
     /// Provides necessary operations of the <see cref="HttpClient"/> class.
     /// </summary>
-    public interface IHttpClientWrapper : IDisposable
+    public interface IHttpClientWrapper
     {
         /// <summary>
         /// Gets or sets the base address of Uniform Resource Identifier (URI) of the Internet resource used when sending requests.

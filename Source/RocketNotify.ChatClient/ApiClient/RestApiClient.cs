@@ -48,14 +48,6 @@
             _httpClient = httpClient;
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="RestApiClient"/> class.
-        /// </summary>
-        ~RestApiClient()
-        {
-            Dispose(false);
-        }
-
         /// <inheritdoc />
         public virtual AuthorizationData AuthData => _authData;
 
@@ -96,13 +88,6 @@
 
             var messages = await SendAsync<MessagesDto>(requestMessage).ConfigureAwait(false);
             return messages.Messages.FirstOrDefault();
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(true);
         }
 
         /// <summary>
@@ -199,16 +184,6 @@
             }
 
             return JsonSerializer.Deserialize<TResult>(responseContent);
-        }
-
-        /// <summary>
-        /// Releases unmanaged and managed resources.
-        /// </summary>
-        /// <param name="isDisposing">Specifies whether to release managed resources.</param>
-        private void Dispose(bool isDisposing)
-        {
-            if (isDisposing)
-                _httpClient?.Dispose();
         }
     }
 }
