@@ -17,6 +17,6 @@
         /// <param name="message">Message instance.</param>
         /// <param name="messageSender">A service used for sending Telegram messages.</param>
         /// <returns>A task that represents the message processing process.</returns>
-        Task ProcessMessageAsync(Message message, ITelegramBotMessageSender messageSender);
+        Task ProcessMessageAsync(Message message, ITelegramMessageSender messageSender);
     }
 }

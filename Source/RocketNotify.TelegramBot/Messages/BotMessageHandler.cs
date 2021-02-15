@@ -53,7 +53,7 @@
         }
 
         /// <inheritdoc/>
-        public Task HandleAsync(Message message, ITelegramBotMessageSender messageSender)
+        public Task HandleAsync(Message message, ITelegramMessageSender messageSender)
         {
             LogMessage(message);
 

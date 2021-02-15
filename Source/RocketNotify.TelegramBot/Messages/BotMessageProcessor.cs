@@ -31,7 +31,7 @@
         }
 
         /// <inheritdoc />
-        public async Task ProcessMessageAsync(Message message, ITelegramBotMessageSender messageSender)
+        public async Task ProcessMessageAsync(Message message, ITelegramMessageSender messageSender)
         {
             var chatId = message.Chat.Id;
             var commandName = ParseCommandName(message);

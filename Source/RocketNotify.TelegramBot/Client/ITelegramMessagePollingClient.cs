@@ -1,18 +1,12 @@
 ﻿namespace RocketNotify.TelegramBot.Client
 {
-    using System;
     using System.Threading;
 
     /// <summary>
-    /// An interface of a Telegram bot client using a polling mechanism o receive messages.
+    /// An interface of a Telegram client using a polling mechanism to receive messages.
     /// </summary>
-    public interface ITelegramBotPollingClient : ITelegramBotMessageSender, IDisposable
+    public interface ITelegramMessagePollingClient : ITelegramMessageSender
     {
-        /// <summary>
-        /// Initializes the client.
-        /// </summary>
-        void Initialize();
-
         /// <summary>
         /// Starts the messages polling process.
         /// </summary>

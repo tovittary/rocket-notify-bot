@@ -3,9 +3,9 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Provides functionality for sending messages through a bot.
+    /// Provides functionality for sending Telegram messages.
     /// </summary>
-    public interface ITelegramBotMessageSender
+    public interface ITelegramMessageSender : IInitializableTelegramClient
     {
         /// <summary>
         /// Sends the message.

@@ -13,7 +13,7 @@
     /// <summary>
     /// Telegram bot client using a polling mechanism to receive messages.
     /// </summary>
-    public class TelegramBotPollingClient : ITelegramBotPollingClient
+    public class TelegramBotPollingClient : ITelegramMessagePollingClient
     {
         /// <summary>
         /// Handles the event of a message received by the bot.

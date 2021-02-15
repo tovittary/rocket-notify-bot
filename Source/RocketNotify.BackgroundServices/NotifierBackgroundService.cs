@@ -1,9 +1,10 @@
-﻿namespace RocketNotify.Notifier
+﻿namespace RocketNotify.BackgroundServices
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using RocketNotify.ChatClient;
@@ -11,9 +12,9 @@
     using RocketNotify.TelegramBot.Client;
 
     /// <summary>
-    /// Messages notification service.
+    /// Rocket.Chat message notification background service.
     /// </summary>
-    public class Notifier : INotifier
+    public class NotifierBackgroundService : BackgroundService
     {
         /// <summary>
         /// New messages check interval.
@@ -23,7 +24,7 @@
         /// <summary>
         /// Client used for sending Telegram messages.
         /// </summary>
-        private readonly ITelegramBotMessageSender _telegramBot;
+        private readonly ITelegramMessageSender _telegramClient;
 
         /// <summary>
         /// Rocket.Chat client.
@@ -38,7 +39,7 @@
         /// <summary>
         /// Logger.
         /// </summary>
-        private readonly ILogger<Notifier> _logger;
+        private readonly ILogger<NotifierBackgroundService> _logger;
 
         /// <summary>
         /// The last received message timestamp.
@@ -46,54 +47,56 @@
         private DateTime _lastMessageTimeStamp = default;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Notifier"/> class.
+        /// Initializes a new instance of the <see cref="NotifierBackgroundService"/> class.
         /// </summary>
-        /// <param name="telegramBot">Client used for sending Telegram messages.</param>
+        /// <param name="telegramClient">Client used for sending Telegram messages.</param>
         /// <param name="rocketChatClient">Rocket.Chat client.</param>
         /// <param name="subscriptionService">Notifications subscriptions service.</param>
         /// <param name="logger">Logger.</param>
-        public Notifier(
-            ITelegramBotMessageSender telegramBot,
+        public NotifierBackgroundService(
+            ITelegramMessageSender telegramClient,
             IRocketChatClient rocketChatClient,
             ISubscriptionService subscriptionService,
-            ILogger<Notifier> logger)
+            ILogger<NotifierBackgroundService> logger)
         {
-            _telegramBot = telegramBot;
+            _telegramClient = telegramClient;
             _rocketChatClient = rocketChatClient;
             _subscriptionService = subscriptionService;
             _logger = logger;
         }
 
-        /// <inheritdoc />
-        public async Task StartAsync(CancellationToken token)
+        /// <inheritdoc/>
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _rocketChatClient.InitializeAsync().ConfigureAwait(false);
+            _telegramClient.Initialize();
 
-            var firstRun = true;
-            while (!token.IsCancellationRequested)
+            await _rocketChatClient.InitializeAsync().ConfigureAwait(false);
+            _lastMessageTimeStamp = await _rocketChatClient.GetLastMessageTimeStampAsync().ConfigureAwait(false);
+
+            while (!stoppingToken.IsCancellationRequested)
             {
+                await Task.Delay(_delayTime, stoppingToken).ConfigureAwait(false);
+
                 var newMessageTimeStamp = await _rocketChatClient.GetLastMessageTimeStampAsync().ConfigureAwait(false);
                 if (newMessageTimeStamp > _lastMessageTimeStamp)
                 {
                     _lastMessageTimeStamp = newMessageTimeStamp;
-
-                    if (firstRun)
-                    {
-                        firstRun = false;
-
-                        await Task.Delay(_delayTime, token).ConfigureAwait(false);
-                        continue;
-                    }
-
                     _logger.LogInformation($"[{DateTime.Now}] New Rocket.Chat message received");
 
-                    var subscribers = await _subscriptionService.GetAllSubscriptionsAsync().ConfigureAwait(false);
-                    foreach (var subs in subscribers)
-                        await _telegramBot.SendMessageAsync(subs.ChatId, "New Rocket.Chat message received").ConfigureAwait(false);
+                    await NotifySubscribersAsync().ConfigureAwait(false);
                 }
-
-                await Task.Delay(_delayTime, token).ConfigureAwait(false);
             }
+        }
+
+        /// <summary>
+        /// Notifies subscribers about the discovered message.
+        /// </summary>
+        /// <returns>A task that represents the subscribers notification process.</returns>
+        private async Task NotifySubscribersAsync()
+        {
+            var subscribers = await _subscriptionService.GetAllSubscriptionsAsync().ConfigureAwait(false);
+            foreach (var subs in subscribers)
+                await _telegramClient.SendMessageAsync(subs.ChatId, "New Rocket.Chat message received").ConfigureAwait(false);
         }
     }
 }

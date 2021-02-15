@@ -21,13 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RocketNotify.ChatClient\RocketNotify.ChatClient.csproj" />
-    <ProjectReference Include="..\RocketNotify.Notifier\RocketNotify.Notifier.csproj" />
-    <ProjectReference Include="..\RocketNotify.TelegramBot\RocketNotify.TelegramBot.csproj" />
-    <ProjectReference Include="..\RocketNotify.Subscription\RocketNotify.Subscription.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -35,6 +28,10 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RocketNotify.BackgroundServices\RocketNotify.BackgroundServices.csproj" />
   </ItemGroup>
 
 </Project>
