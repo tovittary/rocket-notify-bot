@@ -8,6 +8,8 @@
     using System.Text.Json;
     using System.Threading.Tasks;
 
+    using Microsoft.Extensions.Logging;
+
     using RocketNotify.ChatClient.Dto.Error;
     using RocketNotify.ChatClient.Dto.Login;
     using RocketNotify.ChatClient.Dto.Messages;
@@ -35,6 +37,11 @@
         private readonly IHttpClientWrapper _httpClient;
 
         /// <summary>
+        /// Logger.
+        /// </summary>
+        private readonly ILogger<RestApiClient> _logger;
+
+        /// <summary>
         /// Authorization data for sending API requests.
         /// </summary>
         private AuthorizationData _authData;
@@ -43,9 +50,11 @@
         /// Initializes a new instance of the <see cref="RestApiClient"/> class.
         /// </summary>
         /// <param name="httpClient">HTTP client instance.</param>
-        public RestApiClient(IHttpClientWrapper httpClient)
+        /// <param name="logger">Logger.</param>
+        public RestApiClient(IHttpClientWrapper httpClient, ILogger<RestApiClient> logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         /// <inheritdoc />
@@ -54,20 +63,18 @@
         /// <inheritdoc />
         public async Task AuthenticateAsync(string server, AuthenticationData authData)
         {
+            _logger.LogInformation("Rocket.Chat client authentication in progress");
+
             if (AuthData != null)
                 throw new InvalidOperationException("The client already authenticated.");
 
             _httpClient.BaseAddress = new Uri(server);
 
-            bool authSuccess;
-            if (!string.IsNullOrEmpty(authData.AuthToken))
-            {
-                authSuccess = await TryResumeAuthTokenAsync(authData.AuthToken).ConfigureAwait(false);
-                if (authSuccess)
-                    return;
-            }
+            var authSuccess = await AuthenticateByAuthTokenAsync(authData).ConfigureAwait(false);
+            if (authSuccess)
+                return;
 
-            authSuccess = await TryLoginAsync(authData.User, authData.Password).ConfigureAwait(false);
+            authSuccess = await AuthenticateByUserNameAndPasswordAsync(authData).ConfigureAwait(false);
             if (authSuccess)
                 return;
 
@@ -88,6 +95,42 @@
 
             var messages = await SendAsync<MessagesDto>(requestMessage).ConfigureAwait(false);
             return messages.Messages.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Authenticates Rocket.Chat client with the provided auth token.
+        /// </summary>
+        /// <param name="authData">Authentication data.</param>
+        /// <returns>A task that represents the authentication process.</returns>
+        private async Task<bool> AuthenticateByAuthTokenAsync(AuthenticationData authData)
+        {
+            if (string.IsNullOrEmpty(authData.AuthToken))
+                return false;
+
+            _logger.LogInformation("Rocket.Chat auth token resume in progress");
+            var authSuccess = await TryResumeAuthTokenAsync(authData.AuthToken).ConfigureAwait(false);
+            if (authSuccess)
+                _logger.LogInformation("Rocket.Chat auth token has been resumed successfully");
+            else
+                _logger.LogWarning("Rocket.Chat auth token resume has failed");
+
+            return authSuccess;
+        }
+
+        /// <summary>
+        /// Authenticates Rocket.Chat client with the provided username and password.
+        /// </summary>
+        /// <param name="authData">Authentication data.</param>
+        /// <returns>A task that represents the authentication process.</returns>
+        private async Task<bool> AuthenticateByUserNameAndPasswordAsync(AuthenticationData authData)
+        {
+            _logger.LogInformation("Rocket.Chat client authentication with username and password in progress");
+
+            var authSuccess = await TryLoginAsync(authData.User, authData.Password).ConfigureAwait(false);
+            if (authSuccess)
+                _logger.LogInformation("Rocket.Chat client has been authenticated successfully");
+
+            return authSuccess;
         }
 
         /// <summary>
@@ -132,9 +175,9 @@
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO logging
+                _logger.LogError(ex.Message);
                 return false;
             }
         }

@@ -68,11 +68,18 @@
         /// <inheritdoc/>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _telegramClient.Initialize();
+            try
+            {
+                await _telegramClient.Initialize().ConfigureAwait(false);
+                await _rocketChatClient.InitializeAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+                return;
+            }
 
-            await _rocketChatClient.InitializeAsync().ConfigureAwait(false);
             _lastMessageTimeStamp = await _rocketChatClient.GetLastMessageTimeStampAsync().ConfigureAwait(false);
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(_delayTime, stoppingToken).ConfigureAwait(false);

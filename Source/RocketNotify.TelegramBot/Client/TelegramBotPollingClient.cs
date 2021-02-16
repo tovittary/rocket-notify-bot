@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
 
     using RocketNotify.TelegramBot.Client.Factory;
+    using RocketNotify.TelegramBot.Exceptions;
     using RocketNotify.TelegramBot.Messages;
 
     using Telegram.Bot;
@@ -42,7 +43,7 @@
         }
 
         /// <inheritdoc />
-        public void Initialize()
+        public async Task Initialize()
         {
             lock (_botClientFactory)
             {
@@ -51,6 +52,10 @@
 
                 _client = _botClientFactory.GetClient();
             }
+
+            var tokenValid = await _client.TestApiAsync().ConfigureAwait(false);
+            if (!tokenValid)
+                throw new AuthTokenInvalidException("Invalid Telegram client auth token");
         }
 
         /// <inheritdoc />

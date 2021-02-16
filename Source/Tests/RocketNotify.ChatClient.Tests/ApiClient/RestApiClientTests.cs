@@ -9,6 +9,8 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.Extensions.Logging;
+
     using Moq;
 
     using NUnit.Framework;
@@ -23,13 +25,16 @@
     {
         private Mock<IHttpClientWrapper> _httpClientMock;
 
+        private ILogger<RestApiClient> _logger;
+
         private Mock<RestApiClient> _clientMock;
 
         [SetUp]
         public void SetUp()
         {
             _httpClientMock = new Mock<IHttpClientWrapper>();
-            _clientMock = new Mock<RestApiClient>(_httpClientMock.Object) { CallBase = true };
+            _logger = Mock.Of<ILogger<RestApiClient>>();
+            _clientMock = new Mock<RestApiClient>(_httpClientMock.Object, _logger) { CallBase = true };
         }
 
         [Test]

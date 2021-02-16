@@ -1,5 +1,7 @@
 ﻿namespace RocketNotify.TelegramBot.Client
 {
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Provides operations for initializing a Telegram client.
     /// </summary>
@@ -8,6 +10,7 @@
         /// <summary>
         /// Initializes a client.
         /// </summary>
-        void Initialize();
+        /// <returns>A task that represents an initialization process.</returns>
+        Task Initialize();
     }
 }

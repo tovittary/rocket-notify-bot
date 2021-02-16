@@ -57,15 +57,37 @@
         {
             LogMessage(message);
 
+            FiltrationAction filterResultAction;
+            try
+            {
+                filterResultAction = FilterMessage(message);
+            }
+            catch (Exception ex)
+            {
+                LogException(message, ex);
+                return Task.CompletedTask;
+            }
+
+            LogFiltrationResult(message, filterResultAction);
+            if (filterResultAction == FiltrationAction.Process)
+                return _processor.ProcessMessageAsync(message, messageSender);
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Filters the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>The message filtration result.</returns>
+        private FiltrationAction FilterMessage(Message message)
+        {
             IMessageFilter filter = _initialFilter;
             while (true)
             {
                 var filtrationResult = filter.Filter(message);
-                if (filtrationResult.SuggestedAction == FiltrationAction.Ignore)
-                    return Task.FromResult(0);
-
-                if (filtrationResult.SuggestedAction == FiltrationAction.Process)
-                    break;
+                if (filtrationResult.SuggestedAction != FiltrationAction.NextFilter)
+                    return filtrationResult.SuggestedAction;
 
                 var filterType = filtrationResult.NextSuggestedFilterType;
                 if (filterType == null)
@@ -76,8 +98,6 @@
 
                 filter = _filters[filterType];
             }
-
-            return _processor.ProcessMessageAsync(message, messageSender);
         }
 
         /// <summary>
@@ -86,7 +106,29 @@
         /// <param name="message">The message instance.</param>
         private void LogMessage(Message message)
         {
-            var msg = $"[{DateTime.Now}] User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
+            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
+            _logger.LogInformation(msg);
+        }
+
+        /// <summary>
+        /// Logs the message filtration error.
+        /// </summary>
+        /// <param name="message">The message instance.</param>
+        /// <param name="ex">The exception that describes the error that occurred during filtration.</param>
+        private void LogException(Message message, Exception ex)
+        {
+            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} Error: {ex.Message}";
+            _logger.LogError(msg);
+        }
+
+        /// <summary>
+        /// Logs the message filtration result.
+        /// </summary>
+        /// <param name="message">The message instance.</param>
+        /// <param name="filtrationResult">The message filtration result.</param>
+        private void LogFiltrationResult(Message message, FiltrationAction filtrationResult)
+        {
+            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} Result: {filtrationResult}";
             _logger.LogInformation(msg);
         }
     }

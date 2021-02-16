@@ -39,9 +39,6 @@
             {
                 await host.RunAsync().ConfigureAwait(false);
             }
-            catch (TaskCanceledException)
-            {
-            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error has occured.");

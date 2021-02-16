@@ -1,9 +1,11 @@
 ﻿namespace RocketNotify.BackgroundServices
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
 
     using RocketNotify.TelegramBot.Client;
 
@@ -18,21 +20,33 @@
         private readonly ITelegramMessagePollingClient _telegramBot;
 
         /// <summary>
+        /// Logger.
+        /// </summary>
+        private readonly ILogger<TelegramBotBackgroundService> _logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TelegramBotBackgroundService"/> class.
         /// </summary>
         /// <param name="telegramBot">Telegram bot client that uses polling mechanism to receive messages.</param>
-        public TelegramBotBackgroundService(ITelegramMessagePollingClient telegramBot)
+        /// <param name="logger">Logger.</param>
+        public TelegramBotBackgroundService(ITelegramMessagePollingClient telegramBot, ILogger<TelegramBotBackgroundService> logger)
         {
             _telegramBot = telegramBot;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _telegramBot.Initialize();
-            _telegramBot.StartPolling(cancellationToken);
-
-            return Task.CompletedTask;
+            try
+            {
+                await _telegramBot.Initialize().ConfigureAwait(false);
+                _telegramBot.StartPolling(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+            }
         }
 
         /// <inheritdoc/>
