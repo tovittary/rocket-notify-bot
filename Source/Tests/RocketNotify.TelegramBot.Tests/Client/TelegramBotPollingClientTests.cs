@@ -40,13 +40,6 @@
         }
 
         [Test]
-        public void Initialize_AlreadyInitialized_ShouldThrowException()
-        {
-            _client.Initialize();
-            Assert.Throws<InvalidOperationException>(() => _client.Initialize());
-        }
-
-        [Test]
         public void StartPolling_NoClient_ShouldThrowException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.StartPolling(CancellationToken.None));
