@@ -42,6 +42,14 @@ dotnet_naming_rule.private_field_should_be_begins_with_underscore.severity = sug
 dotnet_naming_rule.private_field_should_be_begins_with_underscore.symbols = private_field
 dotnet_naming_rule.private_field_should_be_begins_with_underscore.style = begins_with_underscore
 
+dotnet_naming_rule.private_static_readonly_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.private_static_readonly_should_be_pascal_case.symbols = private_static_readonly
+dotnet_naming_rule.private_static_readonly_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_rule.private_const_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.private_const_should_be_pascal_case.symbols = private_const
+dotnet_naming_rule.private_const_should_be_pascal_case.style = pascal_case
+
 # Symbol specifications
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
@@ -59,6 +67,14 @@ dotnet_naming_symbols.non_field_members.required_modifiers =
 dotnet_naming_symbols.private_field.applicable_kinds = field
 dotnet_naming_symbols.private_field.applicable_accessibilities = private
 dotnet_naming_symbols.private_field.required_modifiers = 
+
+dotnet_naming_symbols.private_static_readonly.applicable_kinds = field
+dotnet_naming_symbols.private_static_readonly.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_readonly.required_modifiers = readonly, static
+
+dotnet_naming_symbols.private_const.applicable_kinds = field
+dotnet_naming_symbols.private_const.applicable_accessibilities = private
+dotnet_naming_symbols.private_const.required_modifiers = const
 
 # Naming styles
 

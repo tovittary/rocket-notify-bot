@@ -32,6 +32,7 @@
         {
             _messageHandlerMock = new Mock<IBotMessageHandler>();
             _botClientMock = new Mock<ITelegramBotClient>();
+            _botClientMock.Setup(x => x.TestApiAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
             _botClientFactoryMock = new Mock<ITelegramBotClientFactory>();
             _botClientFactoryMock.Setup(x => x.GetClient()).Returns(_botClientMock.Object);
@@ -46,9 +47,9 @@
         }
 
         [Test]
-        public void StartPolling_HasClient_ShouldStartReceiving()
+        public async Task StartPolling_HasClient_ShouldStartReceiving()
         {
-            _client.Initialize();
+            await _client.Initialize().ConfigureAwait(false);
             _client.StartPolling(CancellationToken.None);
 
             _botClientMock.Verify(x => x.StartReceiving(null, CancellationToken.None), Times.Once);
@@ -61,11 +62,11 @@
         }
 
         [Test]
-        public void StopPolling_HasClient_ShouldStopReceiving()
+        public async Task StopPolling_HasClient_ShouldStopReceiving()
         {
             _botClientMock.Setup(x => x.IsReceiving).Returns(true);
 
-            _client.Initialize();
+            await _client.Initialize().ConfigureAwait(false);
             _client.StopPolling();
 
             _botClientMock.Verify(x => x.StopReceiving(), Times.Once);
@@ -85,7 +86,7 @@
             var expectedText = "Message Text";
             var cancellationToken = CancellationToken.None;
 
-            _client.Initialize();
+            await _client.Initialize().ConfigureAwait(false);
             _client.StartPolling(cancellationToken);
             await _client.SendMessageAsync(chatId, expectedText).ConfigureAwait(false);
 

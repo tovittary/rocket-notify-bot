@@ -20,6 +20,8 @@
     using RocketNotify.TelegramBot.Messages.Filtration;
     using RocketNotify.TelegramBot.Settings;
 
+    using RocketNotifyBot.Logging;
+
     /// <summary>
     /// Application entry point.
     /// </summary>
@@ -60,11 +62,17 @@
         /// <summary>
         /// Configures logging providers.
         /// </summary>
+        /// <param name="hostContext">The host context.</param>
         /// <param name="logging">An interface for configuring loggin providers.</param>
-        private static void AddLoggers(ILoggingBuilder logging)
+        private static void AddLoggers(HostBuilderContext hostContext, ILoggingBuilder logging)
         {
             logging.ClearProviders();
-            logging.AddConsole();
+            logging.AddConsoleFormatter<CustomConsoleFormatter, CustomConsoleFormatterOptions>();
+            logging.AddConsole(opt => opt.FormatterName = CustomConsoleFormatter.FormatterName);
+
+            var serilogConfiguration = hostContext.Configuration.GetSection("Logging").GetSection("Serilog");
+            if (serilogConfiguration != null)
+                logging.AddFile(serilogConfiguration);
         }
 
         /// <summary>

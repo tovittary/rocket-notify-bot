@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.Subscription.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.TelegramBot.Tests", "Tests\RocketNotify.TelegramBot.Tests\RocketNotify.TelegramBot.Tests.csproj", "{A73C160D-387E-49D6-ADF5-CF3EAAED76FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RocketNotify.BackgroundServices", "RocketNotify.BackgroundServices\RocketNotify.BackgroundServices.csproj", "{C7A1B8A4-E81A-44C2-8AD7-718729830CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.BackgroundServices", "RocketNotify.BackgroundServices\RocketNotify.BackgroundServices.csproj", "{C7A1B8A4-E81A-44C2-8AD7-718729830CDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
