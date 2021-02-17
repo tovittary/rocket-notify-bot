@@ -88,7 +88,7 @@
                 if (newMessageTimeStamp > _lastMessageTimeStamp)
                 {
                     _lastMessageTimeStamp = newMessageTimeStamp;
-                    _logger.LogInformation($"[{DateTime.Now}] New Rocket.Chat message received");
+                    _logger.LogInformation("New Rocket.Chat message received");
 
                     await NotifySubscribersAsync().ConfigureAwait(false);
                 }

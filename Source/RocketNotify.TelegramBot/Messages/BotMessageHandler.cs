@@ -106,7 +106,7 @@
         /// <param name="message">The message instance.</param>
         private void LogMessage(Message message)
         {
-            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
+            var msg = $"MessageId: {message.MessageId} User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
             _logger.LogInformation(msg);
         }
 
@@ -117,7 +117,7 @@
         /// <param name="ex">The exception that describes the error that occurred during filtration.</param>
         private void LogException(Message message, Exception ex)
         {
-            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} Error: {ex.Message}";
+            var msg = $"MessageId: {message.MessageId} Error: {ex.Message}";
             _logger.LogError(msg);
         }
 
@@ -128,7 +128,7 @@
         /// <param name="filtrationResult">The message filtration result.</param>
         private void LogFiltrationResult(Message message, FiltrationAction filtrationResult)
         {
-            var msg = $"[{DateTime.Now}] MessageId: {message.MessageId} Result: {filtrationResult}";
+            var msg = $"MessageId: {message.MessageId} Result: {filtrationResult}";
             _logger.LogInformation(msg);
         }
     }
