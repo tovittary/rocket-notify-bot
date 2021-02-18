@@ -56,7 +56,8 @@
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(AddLoggers)
-                .ConfigureServices(RegisterAllServices);
+                .ConfigureServices(RegisterAllServices)
+                .UseWindowsService();
         }
 
         /// <summary>
