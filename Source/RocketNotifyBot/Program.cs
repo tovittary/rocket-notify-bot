@@ -8,6 +8,7 @@
     using Microsoft.Extensions.Logging;
 
     using RocketNotify.BackgroundServices;
+    using RocketNotify.BackgroundServices.Settings;
     using RocketNotify.ChatClient;
     using RocketNotify.ChatClient.ApiClient;
     using RocketNotify.ChatClient.Settings;
@@ -109,6 +110,7 @@
             services.AddTransient<IRestApiClient, RestApiClient>();
             services.AddTransient<IRocketChatClient, RocketChatClient>();
 
+            services.AddTransient<IServicesSettingsProvider, ServicesSettingsProvider>();
             services.AddHostedService<TelegramBotBackgroundService>();
             services.AddHostedService<NotifierBackgroundService>();
         }

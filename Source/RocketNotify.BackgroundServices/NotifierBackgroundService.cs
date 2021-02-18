@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
+    using RocketNotify.BackgroundServices.Settings;
     using RocketNotify.ChatClient;
     using RocketNotify.Subscription.Services;
     using RocketNotify.TelegramBot.Client;
@@ -16,11 +17,6 @@
     /// </summary>
     public class NotifierBackgroundService : BackgroundService
     {
-        /// <summary>
-        /// New messages check interval.
-        /// </summary>
-        private static readonly TimeSpan _delayTime = TimeSpan.FromSeconds(6);
-
         /// <summary>
         /// Client used for sending Telegram messages.
         /// </summary>
@@ -42,6 +38,16 @@
         private readonly ILogger<NotifierBackgroundService> _logger;
 
         /// <summary>
+        /// Service settings provider.
+        /// </summary>
+        private readonly IServicesSettingsProvider _settingsProvider;
+
+        /// <summary>
+        /// New messages check interval.
+        /// </summary>
+        private TimeSpan _delayTime;
+
+        /// <summary>
         /// The last received message timestamp.
         /// </summary>
         private DateTime _lastMessageTimeStamp = default;
@@ -53,21 +59,27 @@
         /// <param name="rocketChatClient">Rocket.Chat client.</param>
         /// <param name="subscriptionService">Notifications subscriptions service.</param>
         /// <param name="logger">Logger.</param>
+        /// <param name="settingsProvider">Service settings provider.</param>
         public NotifierBackgroundService(
             ITelegramMessageSender telegramClient,
             IRocketChatClient rocketChatClient,
             ISubscriptionService subscriptionService,
-            ILogger<NotifierBackgroundService> logger)
+            ILogger<NotifierBackgroundService> logger,
+            IServicesSettingsProvider settingsProvider)
         {
             _telegramClient = telegramClient;
             _rocketChatClient = rocketChatClient;
             _subscriptionService = subscriptionService;
             _logger = logger;
+            _settingsProvider = settingsProvider;
         }
 
         /// <inheritdoc/>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _delayTime = _settingsProvider.GetMessageCheckInterval();
+            _logger.LogInformation($"Checking new messages every {_delayTime.TotalSeconds} seconds");
+
             try
             {
                 await _telegramClient.Initialize().ConfigureAwait(false);
