@@ -1,4 +1,4 @@
-﻿namespace RocketNotifyBot.Logging
+﻿namespace RocketNotify.Logging.CustomConsole
 {
     using Microsoft.Extensions.Logging.Console;
 

@@ -1,4 +1,4 @@
-﻿namespace RocketNotifyBot
+﻿namespace TelegramBotRunner
 {
     using System;
     using System.Threading.Tasks;
@@ -7,6 +7,8 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
+    using RocketNotify.BackgroundServices;
+    using RocketNotify.BackgroundServices.Settings;
     using RocketNotify.DependencyInjection;
     using RocketNotify.Logging;
 
@@ -44,8 +46,7 @@
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(AddLoggers)
-                .ConfigureServices(RegisterAllServices)
-                .UseWindowsService();
+                .ConfigureServices(RegisterAllServices);
         }
 
         /// <summary>
@@ -67,7 +68,9 @@
             new SubscriptionServiceRegistration().Register(services);
             new TelegramBotServiceRegistration().Register(services);
             new ChatClientServiceRegistration().Register(services);
-            new BackgroundServiceRegistration().Register(services);
+
+            services.AddTransient<IServicesSettingsProvider, ServicesSettingsProvider>();
+            services.AddHostedService<TelegramBotBackgroundService>();
         }
     }
 }
