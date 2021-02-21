@@ -7,19 +7,7 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
-    using RocketNotify.BackgroundServices;
-    using RocketNotify.BackgroundServices.Settings;
-    using RocketNotify.ChatClient;
-    using RocketNotify.ChatClient.ApiClient;
-    using RocketNotify.ChatClient.Settings;
-    using RocketNotify.Subscription.Data;
-    using RocketNotify.Subscription.Services;
-    using RocketNotify.TelegramBot.Client;
-    using RocketNotify.TelegramBot.Client.Factory;
-    using RocketNotify.TelegramBot.Commands;
-    using RocketNotify.TelegramBot.Messages;
-    using RocketNotify.TelegramBot.Messages.Filtration;
-    using RocketNotify.TelegramBot.Settings;
+    using RocketNotify.DependencyInjection;
 
     using RocketNotifyBot.Logging;
 
@@ -35,7 +23,7 @@
         /// <returns>A task representing the application starting process.</returns>
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            using var host = CreateHostBuilder(args).Build();
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
             try
@@ -83,36 +71,10 @@
         /// <param name="services">Registered services.</param>
         private static void RegisterAllServices(IServiceCollection services)
         {
-            services.AddSingleton<IFileStorage, JsonFileStorage>();
-            services.AddSingleton<ISubscribersRepository, JsonSubscribersRepository>();
-            services.AddTransient<ISubscriptionService, SubscriptionService>();
-
-            services.AddTransient<ICommand, HelpCommand>();
-            services.AddTransient<ICommand, StartCommand>();
-            services.AddTransient<ICommand, SubscribeCommand>();
-            services.AddTransient<ICommand, UnsubscribeCommand>();
-
-            services.AddTransient<IBotSettingsProvider, BotSettingsProvider>();
-            services.AddTransient<IBotMessageProcessor, BotMessageProcessor>();
-
-            services.AddTransient<IInitialMessageFilter, MessageTypeMessageFilter>();
-            services.AddTransient<IMessageFilter, ChatTypeMessageFilter>();
-            services.AddTransient<IMessageFilter, BotMentionMessageFilter>();
-            services.AddTransient<IMessageFilter, ContainsCommandMessageFilter>();
-            services.AddTransient<IBotMessageHandler, BotMessageHandler>();
-
-            services.AddTransient<ITelegramBotClientFactory, TelegramBotClientFactory>();
-            services.AddSingleton<ITelegramMessagePollingClient, TelegramBotPollingClient>();
-            services.AddSingleton<ITelegramMessageSender>(srv => srv.GetRequiredService<ITelegramMessagePollingClient>());
-
-            services.AddTransient<IClientSettingsProvider, ClientSettingsProvider>();
-            services.AddHttpClient<IHttpClientWrapper, HttpClientWrapper>();
-            services.AddTransient<IRestApiClient, RestApiClient>();
-            services.AddTransient<IRocketChatClient, RocketChatClient>();
-
-            services.AddTransient<IServicesSettingsProvider, ServicesSettingsProvider>();
-            services.AddHostedService<TelegramBotBackgroundService>();
-            services.AddHostedService<NotifierBackgroundService>();
+            new SubscriptionServiceRegistration().Register(services);
+            new TelegramBotServiceRegistration().Register(services);
+            new ChatClientServiceRegistration().Register(services);
+            new BackgroundServiceRegistration().Register(services);
         }
     }
 }
