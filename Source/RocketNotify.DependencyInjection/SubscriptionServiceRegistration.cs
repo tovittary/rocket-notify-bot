@@ -4,6 +4,7 @@
 
     using RocketNotify.Subscription.Data;
     using RocketNotify.Subscription.Services;
+    using RocketNotify.Subscription.Settings;
 
     /// <summary>
     /// Registers subscription services.
@@ -15,6 +16,8 @@
         {
             services.AddSingleton<IFileStorage, JsonFileStorage>();
             services.AddSingleton<ISubscribersRepository, JsonSubscribersRepository>();
+
+            services.AddTransient<ISubscriptionSettingsProvider, SubscriptionSettingsProvider>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
         }
     }

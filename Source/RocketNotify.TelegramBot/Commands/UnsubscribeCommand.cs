@@ -40,14 +40,14 @@
             }
             catch (SubscriberNotFoundException)
             {
-                return new CommandResult { Text = "This chat is not yet subscribed." };
+                return new CommandResult { ReplyText = "This chat is not yet subscribed." };
             }
             catch (SubscriberOperationException)
             {
-                return new CommandResult { Text = "Failed to unsubscribe. Try again later." };
+                return new CommandResult { ReplyText = "Failed to unsubscribe. Try again later." };
             }
 
-            return new CommandResult { Text = "Successfully unsubscribed." };
+            return new CommandResult { ReplyText = "Successfully unsubscribed." };
         }
     }
 }

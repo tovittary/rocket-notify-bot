@@ -20,7 +20,7 @@
             var commandNames = Enum.GetValues(typeof(CommandName)).Cast<CommandName>();
             var commandNamesString = string.Join(", ", commandNames.Select(c => $"/{c.ToString().ToLower()}"));
 
-            var result = new CommandResult { Text = $"Available commands: {commandNamesString}" };
+            var result = new CommandResult { ReplyText = $"Available commands: {commandNamesString}" };
             return Task.FromResult(result);
         }
     }

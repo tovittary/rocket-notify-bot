@@ -41,7 +41,7 @@
                 throw new NotSupportedException($"The command '{commandName}' is not supported at the moment.");
 
             var result = await command.ExecuteAsync(message).ConfigureAwait(false);
-            await messageSender.SendMessageAsync(chatId, result.Text).ConfigureAwait(false);
+            await messageSender.SendMessageAsync(chatId, result.ReplyText, result.ReplyMarkup).ConfigureAwait(false);
         }
 
         /// <summary>

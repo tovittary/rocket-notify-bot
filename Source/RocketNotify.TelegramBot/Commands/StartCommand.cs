@@ -15,7 +15,7 @@
         /// <inheritdoc />
         public Task<CommandResult> ExecuteAsync(Message message)
         {
-            var result = new CommandResult { Text = $"Hello there, dear {message.From.FirstName}" };
+            var result = new CommandResult { ReplyText = $"Hello there, dear {message.From.FirstName}" };
             return Task.FromResult(result);
         }
     }
