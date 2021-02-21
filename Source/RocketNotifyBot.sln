@@ -32,9 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.BackgroundServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.DependencyInjection", "RocketNotify.DependencyInjection\RocketNotify.DependencyInjection.csproj", "{560F9530-76DC-41D3-9FA3-10DBA8157674}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramBotRunner", "TelegramBotRunner\TelegramBotRunner.csproj", "{C88F8341-04D4-4D44-8F7F-0827DCA6A472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBotRunner", "TelegramBotRunner\TelegramBotRunner.csproj", "{C88F8341-04D4-4D44-8F7F-0827DCA6A472}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RocketNotify.Logging", "RocketNotify.Logging\RocketNotify.Logging.csproj", "{2FB5FCD4-F019-49FD-96EF-AC4DD12869BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.Logging", "RocketNotify.Logging\RocketNotify.Logging.csproj", "{2FB5FCD4-F019-49FD-96EF-AC4DD12869BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
