@@ -8,12 +8,12 @@
     public class CommandResult
     {
         /// <summary>
-        /// Gets or sets the reply text.
+        /// Gets or sets the response text.
         /// </summary>
-        public string ReplyText { get; set; }
+        public string ResponseText { get; set; }
 
         /// <summary>
-        /// Gets or sets markup of the reply message.
+        /// Gets or sets the markup that a user can use to reply to the bot message.
         /// </summary>
         public IReplyMarkup ReplyMarkup { get; set; }
     }

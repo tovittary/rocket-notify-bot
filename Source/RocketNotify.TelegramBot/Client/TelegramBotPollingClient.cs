@@ -82,16 +82,17 @@
         }
 
         /// <inheritdoc />
-        public Task SendMessageAsync(long chatId, string text) =>
+        public Task<int> SendMessageAsync(long chatId, string text) =>
             SendMessageAsync(chatId, text, null);
 
         /// <inheritdoc/>
-        public Task SendMessageAsync(long chatId, string text, IReplyMarkup markup)
+        public async Task<int> SendMessageAsync(long chatId, string text, IReplyMarkup markup)
         {
             if (_client == null)
                 throw new InvalidOperationException("The client is not yet initialized.");
 
-            return _client.SendTextMessageAsync(chatId, text, replyMarkup: markup);
+            var sentMessage = await _client.SendTextMessageAsync(chatId, text, replyMarkup: markup).ConfigureAwait(false);
+            return sentMessage.MessageId;
         }
 
         /// <summary>

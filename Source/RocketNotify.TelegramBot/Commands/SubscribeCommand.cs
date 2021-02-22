@@ -39,21 +39,21 @@
                 if (secretIsNeeded)
                 {
                     var replyMarkup = new ForceReplyMarkup();
-                    return new CommandResult { ReplyText = "Provide the subscription key to complete the process.", ReplyMarkup = replyMarkup };
+                    return new CommandResult { ResponseText = "Provide the subscription key to complete the process.", ReplyMarkup = replyMarkup };
                 }
 
                 var senderId = message.Chat.Id;
                 await _subscriptionService.AddSubscriptionAsync(senderId, string.Empty).ConfigureAwait(false);
 
-                return new CommandResult { ReplyText = "Successfully subscribed." };
+                return new CommandResult { ResponseText = "Successfully subscribed." };
             }
             catch (SubscriberAlreadyExistsException)
             {
-                return new CommandResult { ReplyText = "This chat already subscribed." };
+                return new CommandResult { ResponseText = "This chat already subscribed." };
             }
             catch (SubscriberOperationException)
             {
-                return new CommandResult { ReplyText = "Failed to subscribe. Try again later." };
+                return new CommandResult { ResponseText = "Failed to subscribe. Try again later." };
             }
         }
     }

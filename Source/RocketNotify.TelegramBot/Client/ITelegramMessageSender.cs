@@ -15,7 +15,7 @@
         /// <param name="chatId">The chat identifier.</param>
         /// <param name="text">The message text.</param>
         /// <returns>A task that represents the message sending process.</returns>
-        Task SendMessageAsync(long chatId, string text);
+        Task<int> SendMessageAsync(long chatId, string text);
 
         /// <summary>
         /// Sends the message.
@@ -24,6 +24,6 @@
         /// <param name="text">The message text.</param>
         /// <param name="markup">Markup of the message.</param>
         /// <returns>A task that represents the message sending process.</returns>
-        Task SendMessageAsync(long chatId, string text, IReplyMarkup markup);
+        Task<int> SendMessageAsync(long chatId, string text, IReplyMarkup markup);
     }
 }
