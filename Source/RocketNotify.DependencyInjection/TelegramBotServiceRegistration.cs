@@ -1,5 +1,8 @@
 ﻿namespace RocketNotify.DependencyInjection
 {
+    using System;
+    using System.Collections.Generic;
+
     using Microsoft.Extensions.DependencyInjection;
 
     using RocketNotify.TelegramBot.Client;
@@ -7,6 +10,7 @@
     using RocketNotify.TelegramBot.Commands;
     using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Messages.Filtration;
+    using RocketNotify.TelegramBot.Messages.Filtration.Factory;
     using RocketNotify.TelegramBot.Settings;
 
     /// <summary>
@@ -25,15 +29,27 @@
             services.AddTransient<IBotSettingsProvider, BotSettingsProvider>();
             services.AddTransient<IBotMessageProcessor, BotMessageProcessor>();
 
-            services.AddTransient<IInitialMessageFilter, MessageTypeMessageFilter>();
-            services.AddTransient<IMessageFilter, ChatTypeMessageFilter>();
-            services.AddTransient<IMessageFilter, BotMentionMessageFilter>();
-            services.AddTransient<IMessageFilter, ContainsCommandMessageFilter>();
+            RegisterMessageFilters(services);
             services.AddTransient<IBotMessageHandler, BotMessageHandler>();
 
             services.AddTransient<ITelegramBotClientFactory, TelegramBotClientFactory>();
             services.AddSingleton<ITelegramMessagePollingClient, TelegramBotPollingClient>();
             services.AddSingleton<ITelegramMessageSender>(srv => srv.GetRequiredService<ITelegramMessagePollingClient>());
+        }
+
+        /// <summary>
+        /// Registers message filters in the correct order.
+        /// </summary>
+        /// <param name="services">Collection of service descriptors.</param>
+        private void RegisterMessageFilters(IServiceCollection services)
+        {
+            services.AddTransient<IChainedMessageFilter, MessageTypeMessageFilter>();
+            services.AddTransient<IChainedMessageFilter, ChatTypeMessageFilter>();
+            services.AddTransient<IChainedMessageFilter, BotMentionMessageFilter>();
+            services.AddTransient<IChainedMessageFilter, ContainsCommandMessageFilter>();
+            services.AddTransient<Func<IEnumerable<IChainedMessageFilter>>>(sp => sp.GetServices<IChainedMessageFilter>);
+
+            services.AddTransient<IMessageFilterFactory, MessageFilterFactory>();
         }
     }
 }

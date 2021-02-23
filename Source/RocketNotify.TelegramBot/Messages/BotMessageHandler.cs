@@ -1,14 +1,12 @@
 ﻿namespace RocketNotify.TelegramBot.Messages
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Logging;
 
     using RocketNotify.TelegramBot.Client;
-    using RocketNotify.TelegramBot.Messages.Filtration;
+    using RocketNotify.TelegramBot.Messages.Filtration.Factory;
 
     using Telegram.Bot.Types;
 
@@ -18,14 +16,9 @@
     public class BotMessageHandler : IBotMessageHandler
     {
         /// <summary>
-        /// A collection of message filtration units.
+        /// The factory used for obtaining the message filters.
         /// </summary>
-        private readonly Dictionary<Type, IMessageFilter> _filters;
-
-        /// <summary>
-        /// The message filter that starts the filtration process.
-        /// </summary>
-        private readonly IInitialMessageFilter _initialFilter;
+        private readonly IMessageFilterFactory _messageFilterFactory;
 
         /// <summary>
         /// Messages processing module.
@@ -40,14 +33,12 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BotMessageHandler"/> class.
         /// </summary>
-        /// <param name="initialFilter">The message filter that starts the filtration process.</param>
-        /// <param name="filters">A collection of message filtration units.</param>
+        /// <param name="messageFilterFactory">The factory used for obtaining the message filters.</param>
         /// <param name="processor">Messages processing module.</param>
         /// <param name="logger">Logger.</param>
-        public BotMessageHandler(IInitialMessageFilter initialFilter, IEnumerable<IMessageFilter> filters, IBotMessageProcessor processor, ILogger<BotMessageHandler> logger)
+        public BotMessageHandler(IMessageFilterFactory messageFilterFactory, IBotMessageProcessor processor, ILogger<BotMessageHandler> logger)
         {
-            _filters = filters.ToDictionary(f => f.GetType());
-            _initialFilter = initialFilter;
+            _messageFilterFactory = messageFilterFactory;
             _processor = processor;
             _logger = logger;
         }
@@ -57,47 +48,33 @@
         {
             LogMessage(message);
 
-            FiltrationAction filterResultAction;
-            try
-            {
-                filterResultAction = FilterMessage(message);
-            }
-            catch (Exception ex)
-            {
-                LogException(message, ex);
+            var shouldHandleMessage = FilterMessage(message);
+            if (!shouldHandleMessage)
                 return Task.CompletedTask;
-            }
 
-            LogFiltrationResult(message, filterResultAction);
-            if (filterResultAction == FiltrationAction.Process)
-                return _processor.ProcessMessageAsync(message, messageSender);
-
-            return Task.CompletedTask;
+            return _processor.ProcessMessageAsync(message, messageSender);
         }
 
         /// <summary>
         /// Filters the message.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <returns>The message filtration result.</returns>
-        private FiltrationAction FilterMessage(Message message)
+        /// <returns><c>true</c> if the message should be handled, <c>false</c> otherwise.</returns>
+        private bool FilterMessage(Message message)
         {
-            IMessageFilter filter = _initialFilter;
-            while (true)
+            var shouldHandleMessage = false;
+            try
             {
-                var filtrationResult = filter.Filter(message);
-                if (filtrationResult.SuggestedAction != FiltrationAction.NextFilter)
-                    return filtrationResult.SuggestedAction;
-
-                var filterType = filtrationResult.NextSuggestedFilterType;
-                if (filterType == null)
-                    throw new InvalidOperationException("Invalid filtration result: next filter type is not set");
-
-                if (!_filters.ContainsKey(filterType))
-                    throw new InvalidOperationException("Invalid filtration result: next filter type is not found");
-
-                filter = _filters[filterType];
+                var messageFilter = _messageFilterFactory.GetFilter();
+                shouldHandleMessage = messageFilter.Filter(message);
             }
+            catch (Exception ex)
+            {
+                LogException(message, ex);
+            }
+
+            LogFiltrationResult(message, shouldHandleMessage);
+            return shouldHandleMessage;
         }
 
         /// <summary>
@@ -106,7 +83,7 @@
         /// <param name="message">The message instance.</param>
         private void LogMessage(Message message)
         {
-            var msg = $"MessageId: {message.MessageId} User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
+            var msg = $"MessageId: {message.MessageId}; User: '{message.From.Username}' ({message.Chat.Title ?? message.Chat.FirstName}). Message: '{message.Text}'";
             _logger.LogInformation(msg);
         }
 
@@ -117,7 +94,7 @@
         /// <param name="ex">The exception that describes the error that occurred during filtration.</param>
         private void LogException(Message message, Exception ex)
         {
-            var msg = $"MessageId: {message.MessageId} Error: {ex.Message}";
+            var msg = $"MessageId: {message.MessageId}; Error: {ex.Message}";
             _logger.LogError(msg);
         }
 
@@ -125,10 +102,12 @@
         /// Logs the message filtration result.
         /// </summary>
         /// <param name="message">The message instance.</param>
-        /// <param name="filtrationResult">The message filtration result.</param>
-        private void LogFiltrationResult(Message message, FiltrationAction filtrationResult)
+        /// <param name="shouldHandleMessage">Specifies whether the message should be handled.</param>
+        private void LogFiltrationResult(Message message, bool shouldHandleMessage)
         {
-            var msg = $"MessageId: {message.MessageId} Result: {filtrationResult}";
+            var filtrationResult = shouldHandleMessage ? "Process" : "Ignore";
+
+            var msg = $"MessageId: {message.MessageId}; Filtration result: {filtrationResult}";
             _logger.LogInformation(msg);
         }
     }

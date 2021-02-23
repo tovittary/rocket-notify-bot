@@ -6,18 +6,23 @@
     /// <summary>
     /// Filters a message based on the type of chat it came from.
     /// </summary>
-    public class ChatTypeMessageFilter : IMessageFilter
+    public class ChatTypeMessageFilter : IChainedMessageFilter
     {
+        /// <summary>
+        /// Next message filter.
+        /// </summary>
+        private IMessageFilter _nextFilter;
+
         /// <inheritdoc/>
-        public FiltrationResult Filter(Message message)
+        public bool Filter(Message message)
         {
             if (message.Chat.Type == ChatType.Supergroup || message.Chat.Type == ChatType.Channel)
-                return FiltrationResult.Ignore();
+                return false;
 
-            if (message.Chat.Type == ChatType.Private)
-                return FiltrationResult.NextFilter(typeof(ContainsCommandMessageFilter));
-
-            return FiltrationResult.NextFilter(typeof(BotMentionMessageFilter));
+            return _nextFilter.Filter(message);
         }
+
+        /// <inheritdoc/>
+        public void SetNextFilter(IMessageFilter nextFilter) => _nextFilter = nextFilter;
     }
 }
