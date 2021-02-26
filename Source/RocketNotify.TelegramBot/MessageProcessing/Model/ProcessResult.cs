@@ -4,11 +4,11 @@
     /// Describes a message processing result.
     /// </summary>
     /// <seealso cref="Message"/>.
-    internal class ProcessResult : Message
+    internal class ProcessResult
     {
         /// <summary>
-        /// Gets or sets the message markup.
+        /// Gets or sets a value indicating whether processing of the message has completed and no more messages are expected.
         /// </summary>
-        public MessageMarkup Markup { get; set; }
+        public bool IsFinal { get; set; }
     }
 }

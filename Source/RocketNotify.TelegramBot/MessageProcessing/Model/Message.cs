@@ -1,5 +1,7 @@
 ﻿namespace RocketNotify.TelegramBot.MessageProcessing.Model
 {
+    using RocketNotify.TelegramBot.MessageProcessing.Model.Markups;
+
     /// <summary>
     /// Describes a message.
     /// </summary>
@@ -8,7 +10,7 @@
         /// <summary>
         /// Gets or sets the message identifier.
         /// </summary>
-        public int Id { get; set; }
+        public int MessageId { get; set; }
 
         /// <summary>
         /// Gets or sets the message text.
@@ -23,6 +25,11 @@
         /// <summary>
         /// Gets or sets the message reply info.
         /// </summary>
-        public MessageReply Reply { get; set; }
+        public MessageReply ReplyInfo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message markup.
+        /// </summary>
+        public IMessageMarkup Markup { get; set; }
     }
 }

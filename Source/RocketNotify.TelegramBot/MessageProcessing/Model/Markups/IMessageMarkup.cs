@@ -1,9 +1,9 @@
-﻿namespace RocketNotify.TelegramBot.MessageProcessing.Model
+﻿namespace RocketNotify.TelegramBot.MessageProcessing.Model.Markups
 {
     /// <summary>
     /// Describes a special markup that goes with a message.
     /// </summary>
-    internal class MessageMarkup
+    internal interface IMessageMarkup
     {
     }
 }

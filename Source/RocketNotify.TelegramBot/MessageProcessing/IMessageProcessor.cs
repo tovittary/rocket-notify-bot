@@ -1,29 +1,26 @@
 ﻿namespace RocketNotify.TelegramBot.MessageProcessing
 {
+    using System.Threading.Tasks;
+
     using RocketNotify.TelegramBot.MessageProcessing.Model;
 
     /// <summary>
-    /// Functionality of a message processor.
-    /// Able to process a chain of related messages.
+    /// An interface that describes a message processor that doesn't have any states and can be used for processing a single message.
     /// </summary>
-    internal interface IMessageProcessor : IMessageProcessingState
+    internal interface IMessageProcessor
     {
         /// <summary>
-        /// Gets the current message processing state.
-        /// </summary>
-        IMessageProcessingState CurrentState { get; }
-
-        /// <summary>
-        /// Sets the new state of message processing.
-        /// </summary>
-        /// <param name="state">The new processing state.</param>
-        void ChangeCurrentState(IMessageProcessingState state);
-
-        /// <summary>
-        /// Checks if the provided message is relevant to the processor, i.e. can be processed by it.
+        /// Checks if the provided message is relevant in the current state of message processor.
         /// </summary>
         /// <param name="message">The message to check.</param>
-        /// <returns><c>true</c> if the message can be processed by the processor, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the message can be processed in this state, <c>false</c> otherwise.</returns>
         bool IsRelevant(Message message);
+
+        /// <summary>
+        /// Processes the provided message as an async operation.
+        /// </summary>
+        /// <param name="message">The message to process.</param>
+        /// <returns>A task object containing the result of message processing.</returns>
+        Task<ProcessResult> ProcessAsync(Message message);
     }
 }

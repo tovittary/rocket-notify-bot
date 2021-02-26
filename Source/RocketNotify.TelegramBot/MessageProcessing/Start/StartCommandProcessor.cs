@@ -1,7 +1,9 @@
 ﻿namespace RocketNotify.TelegramBot.MessageProcessing.Start
 {
+    using System;
     using System.Threading.Tasks;
 
+    using RocketNotify.TelegramBot.Client;
     using RocketNotify.TelegramBot.MessageProcessing.Model;
 
     /// <summary>
@@ -9,22 +11,37 @@
     /// </summary>
     internal class StartCommandProcessor : IMessageProcessor
     {
-        /// <inheritdoc/>
-        public IMessageProcessingState CurrentState => throw new System.NotImplementedException();
+        /// <summary>
+        /// The text of the command.
+        /// </summary>
+        private const string CommandText = "/start";
 
-        /// <inheritdoc/>
-        public void ChangeCurrentState(IMessageProcessingState state)
+        /// <summary>
+        /// The client used to send responses to messages.
+        /// </summary>
+        private readonly ITelegramMessageSender _responder;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StartCommandProcessor"/> class.
+        /// </summary>
+        /// <param name="responder">The client used to send responses to messages.</param>
+        public StartCommandProcessor(ITelegramMessageSender responder)
         {
-            throw new System.NotImplementedException();
+            _responder = responder;
         }
 
         /// <inheritdoc/>
-        public bool IsRelevant(Message message)
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool IsRelevant(Message message) => message.Text.Contains(CommandText, StringComparison.InvariantCultureIgnoreCase);
 
         /// <inheritdoc/>
-        public Task<ProcessResult> ProcessAsync(Message message) => CurrentState.ProcessAsync(message);
+        public async Task<ProcessResult> ProcessAsync(Message message)
+        {
+            var senderId = message.Sender.Id;
+            var responseText = $"Hello there, friend! Now I know that your name is {message.Sender.Name}! I know everything about you...";
+
+            await _responder.SendMessageAsync(senderId, responseText).ConfigureAwait(false);
+
+            return new ProcessResult { IsFinal = true };
+        }
     }
 }

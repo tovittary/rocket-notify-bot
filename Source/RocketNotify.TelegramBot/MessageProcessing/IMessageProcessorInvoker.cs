@@ -12,6 +12,6 @@
         /// </summary>
         /// <param name="message">The message that should be processed.</param>
         /// <returns>The message processor.</returns>
-        IMessageProcessor GetProcessor(Message message);
+        IStatefulMessageProcessor GetProcessor(Message message);
     }
 }
