@@ -13,6 +13,7 @@
     using RocketNotify.TelegramBot.MessageProcessing.Start;
     using RocketNotify.TelegramBot.MessageProcessing.Subscribe;
     using RocketNotify.TelegramBot.MessageProcessing.Unsubscribe;
+    using RocketNotify.TelegramBot.MessageProcessing.Unsupported;
     using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Messages.Filtration;
     using RocketNotify.TelegramBot.Messages.Filtration.Factory;
@@ -91,6 +92,9 @@
             services.AddTransient<IMessageProcessor, HelpCommandProcessor>();
 
             services.AddTransient<Func<IEnumerable<IMessageProcessor>>>(sp => sp.GetServices<IMessageProcessor>);
+
+            services.AddTransient<IUnsupportedCommandProcessor, UnsupportedCommandProcessor>();
+            services.AddTransient<Func<IUnsupportedCommandProcessor>>(sp => sp.GetRequiredService<IUnsupportedCommandProcessor>);
         }
 
         /// <summary>
