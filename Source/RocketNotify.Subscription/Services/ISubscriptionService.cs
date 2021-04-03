@@ -13,8 +13,9 @@
         /// Adds a chat subscription to notifications.
         /// </summary>
         /// <param name="chatId">The chat identifier.</param>
+        /// <param name="secretKey">The secret subscription key.</param>
         /// <returns>A task that represents the adding the subscription process.</returns>
-        Task AddSubscriptionAsync(long chatId);
+        Task AddSubscriptionAsync(long chatId, string secretKey);
 
         /// <summary>
         /// Removes a chat subscription to notifications.
@@ -28,5 +29,11 @@
         /// </summary>
         /// <returns>Subscriptions data.</returns>
         Task<Subscriber[]> GetAllSubscriptionsAsync();
+
+        /// <summary>
+        /// Checks if the potential subscriber needs to provide the secret key to subscribe.
+        /// </summary>
+        /// <returns><c>true</c> if the secret key is needed, <c>false</c> otherwise.</returns>
+        bool CheckSubscriptionKeyNeeded();
     }
 }

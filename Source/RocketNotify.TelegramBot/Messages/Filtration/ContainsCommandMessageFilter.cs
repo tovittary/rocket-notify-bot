@@ -8,18 +8,23 @@
     /// <summary>
     /// Filters a message based on whether it contains a command.
     /// </summary>
-    public class ContainsCommandMessageFilter : IMessageFilter
+    public class ContainsCommandMessageFilter : IChainedMessageFilter
     {
         /// <inheritdoc/>
-        public FiltrationResult Filter(Message message)
+        public bool Filter(Message message)
         {
             if (message.Entities == null)
-                return FiltrationResult.Ignore();
+                return false;
 
             if (message.Entities.Any(e => e.Type == MessageEntityType.BotCommand))
-                return FiltrationResult.Process();
+                return true;
 
-            return FiltrationResult.Ignore();
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public void SetNextFilter(IMessageFilter nextFilter)
+        {
         }
     }
 }

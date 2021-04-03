@@ -11,12 +11,17 @@
     /// <summary>
     /// Filters a message based on whether the bot is mentioned in it.
     /// </summary>
-    public class BotMentionMessageFilter : IMessageFilter
+    public class BotMentionMessageFilter : IChainedMessageFilter
     {
         /// <summary>
         /// Bot settings provider.
         /// </summary>
         private readonly IBotSettingsProvider _settingProvider;
+
+        /// <summary>
+        /// Next message filter.
+        /// </summary>
+        private IMessageFilter _nextFilter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BotMentionMessageFilter"/> class.
@@ -28,8 +33,12 @@
         }
 
         /// <inheritdoc/>
-        public FiltrationResult Filter(Message message)
+        public bool Filter(Message message)
         {
+            var chatIsPrivate = message.Chat.Type == ChatType.Private;
+            if (chatIsPrivate)
+                return _nextFilter.Filter(message);
+
             var botUserName = _settingProvider.GetBotUserName();
             if (string.IsNullOrEmpty(botUserName))
             {
@@ -41,14 +50,17 @@
             var mentions = entities.Where(entity => entity.Type == MessageEntityType.Mention);
             var botMentionFound = mentions.Any(m => m.Value.Equals(botUserName, StringComparison.InvariantCultureIgnoreCase));
             if (botMentionFound)
-                return FiltrationResult.NextFilter(typeof(ContainsCommandMessageFilter));
+                return _nextFilter.Filter(message);
 
             var commands = entities.Where(entity => entity.Type == MessageEntityType.BotCommand);
             var commandHasMention = commands.Any(c => c.Value.Contains(botUserName, StringComparison.InvariantCultureIgnoreCase));
             if (commandHasMention)
-                return FiltrationResult.NextFilter(typeof(ContainsCommandMessageFilter));
+                return _nextFilter.Filter(message);
 
-            return FiltrationResult.Ignore();
+            return false;
         }
+
+        /// <inheritdoc/>
+        public void SetNextFilter(IMessageFilter nextFilter) => _nextFilter = nextFilter;
     }
 }

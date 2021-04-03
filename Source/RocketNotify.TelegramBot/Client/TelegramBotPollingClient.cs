@@ -10,6 +10,7 @@
 
     using Telegram.Bot;
     using Telegram.Bot.Args;
+    using Telegram.Bot.Types.ReplyMarkups;
 
     /// <summary>
     /// Telegram bot client using a polling mechanism to receive messages.
@@ -81,12 +82,17 @@
         }
 
         /// <inheritdoc />
-        public Task SendMessageAsync(long chatId, string text)
+        public Task<int> SendMessageAsync(long chatId, string text) =>
+            SendMessageAsync(chatId, text, null);
+
+        /// <inheritdoc/>
+        public async Task<int> SendMessageAsync(long chatId, string text, IReplyMarkup markup)
         {
             if (_client == null)
                 throw new InvalidOperationException("The client is not yet initialized.");
 
-            return _client.SendTextMessageAsync(chatId, text);
+            var sentMessage = await _client.SendTextMessageAsync(chatId, text, replyMarkup: markup).ConfigureAwait(false);
+            return sentMessage.MessageId;
         }
 
         /// <summary>
@@ -95,6 +101,6 @@
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
         private void ProcessMessageAsync(object sender, MessageEventArgs e) =>
-            _messageHandler.HandleAsync(e.Message, this);
+            _messageHandler.HandleAsync(e.Message);
     }
 }
