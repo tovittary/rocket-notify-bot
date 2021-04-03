@@ -15,6 +15,7 @@
     using Telegram.Bot;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
+    using Telegram.Bot.Types.ReplyMarkups;
 
     [TestFixture]
     public class TelegramBotPollingClientTests
@@ -33,6 +34,16 @@
             _messageHandlerMock = new Mock<IBotMessageHandler>();
             _botClientMock = new Mock<ITelegramBotClient>();
             _botClientMock.Setup(x => x.TestApiAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
+            _botClientMock.Setup(x => x.SendTextMessageAsync(
+                It.IsAny<ChatId>(),
+                It.IsAny<string>(),
+                It.IsAny<ParseMode>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>(),
+                It.IsAny<int>(),
+                It.IsAny<IReplyMarkup>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Message { MessageId = 1 });
 
             _botClientFactoryMock = new Mock<ITelegramBotClientFactory>();
             _botClientFactoryMock.Setup(x => x.GetClient()).Returns(_botClientMock.Object);
@@ -75,7 +86,7 @@
         [Test]
         public void SendMessageAsync_NoClient_ShouldThrowException()
         {
-            Assert.Throws<InvalidOperationException>(() => _client.SendMessageAsync(123456, string.Empty));
+            Assert.ThrowsAsync<InvalidOperationException>(() => _client.SendMessageAsync(123456, string.Empty));
         }
 
         [Test]
@@ -88,8 +99,9 @@
 
             await _client.Initialize().ConfigureAwait(false);
             _client.StartPolling(cancellationToken);
-            await _client.SendMessageAsync(chatId, expectedText).ConfigureAwait(false);
+            var sentMessageId = await _client.SendMessageAsync(chatId, expectedText).ConfigureAwait(false);
 
+            Assert.AreEqual(1, sentMessageId);
             _botClientMock.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), expectedText, ParseMode.Default, false, false, 0, null, cancellationToken), Times.Once);
         }
     }
