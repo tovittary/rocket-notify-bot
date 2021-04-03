@@ -13,7 +13,6 @@
         /// Handles the received message.
         /// </summary>
         /// <param name="message">Message instance.</param>
-        /// <param name="messageSender">A service used for sending Telegram messages.</param>
         /// <returns>The task object that represents the message handling process.</returns>
         Task HandleAsync(Message message);
     }

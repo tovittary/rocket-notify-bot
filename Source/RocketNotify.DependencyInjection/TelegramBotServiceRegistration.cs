@@ -11,6 +11,7 @@
     using RocketNotify.TelegramBot.MessageProcessing;
     using RocketNotify.TelegramBot.MessageProcessing.Start;
     using RocketNotify.TelegramBot.MessageProcessing.Subscribe;
+    using RocketNotify.TelegramBot.MessageProcessing.Unsubscribe;
     using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Messages.Filtration;
     using RocketNotify.TelegramBot.Messages.Filtration.Factory;
@@ -25,9 +26,6 @@
         public void Register(IServiceCollection services)
         {
             services.AddTransient<ICommand, HelpCommand>();
-            services.AddTransient<ICommand, StartCommand>();
-            services.AddTransient<ICommand, SubscribeCommand>();
-            services.AddTransient<ICommand, UnsubscribeCommand>();
 
             services.AddTransient<IBotSettingsProvider, BotSettingsProvider>();
 
@@ -47,6 +45,7 @@
         private void RegisterMessageProcessing(IServiceCollection services)
         {
             services.AddTransient<IMessageProcessor, StartCommandProcessor>();
+            services.AddTransient<IMessageProcessor, UnsubscribeCommandProcessor>();
             RegisterSubscriptionCommandProcessing(services);
             services.AddTransient<Func<IEnumerable<IMessageProcessor>>>(sp => sp.GetServices<IMessageProcessor>);
 

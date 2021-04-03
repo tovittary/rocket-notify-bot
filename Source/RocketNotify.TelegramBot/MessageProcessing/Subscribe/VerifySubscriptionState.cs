@@ -100,7 +100,7 @@
         }
 
         /// <summary>
-        /// Sets the message processor to a state that signals about the completion of the subscription process
+        /// Sets the message processor to a state that signals about the completion of the subscription process.
         /// </summary>
         private void SetSubscriptionCompletedState()
         {
