@@ -101,6 +101,6 @@
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
         private void ProcessMessageAsync(object sender, MessageEventArgs e) =>
-            _messageHandler.HandleAsync(e.Message, this);
+            _messageHandler.HandleAsync(e.Message);
     }
 }
