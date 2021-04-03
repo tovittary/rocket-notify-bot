@@ -6,7 +6,7 @@
     /// Functionality of a message processor that stores data about processed messages.
     /// Able to process a chain of related messages.
     /// </summary>
-    internal interface IStatefulMessageProcessor : IMessageProcessor
+    public interface IStatefulMessageProcessor : IMessageProcessor
     {
         /// <summary>
         /// Gets the context of message processing.

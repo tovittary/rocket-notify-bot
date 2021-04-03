@@ -1,5 +1,6 @@
 ﻿namespace RocketNotify.TelegramBot.MessageProcessing.Subscribe
 {
+    using System;
     using System.Threading.Tasks;
 
     using RocketNotify.TelegramBot.Client;
@@ -8,7 +9,7 @@
     /// <summary>
     /// Processes a sequence of messages related to the notifications subscription process.
     /// </summary>
-    internal class SubscribeCommandProcessor : IStatefulMessageProcessor
+    public class SubscribeCommandProcessor : IStatefulMessageProcessor
     {
         /// <summary>
         /// The client used to send responses to messages.
@@ -19,9 +20,11 @@
         /// Initializes a new instance of the <see cref="SubscribeCommandProcessor"/> class.
         /// </summary>
         /// <param name="responder">The client used to send responses to messages.</param>
-        public SubscribeCommandProcessor(ITelegramMessageSender responder)
+        /// <param name="getInitialState">The delegate for acquiring initial subscription command processing state.</param>
+        public SubscribeCommandProcessor(ITelegramMessageSender responder, Func<InitialSubscribeState> getInitialState)
         {
             _responder = responder;
+            ChangeCurrentState(getInitialState());
         }
 
         /// <inheritdoc/>
@@ -38,18 +41,20 @@
         }
 
         /// <inheritdoc/>
-        public bool IsRelevant(Message message) => CurrentState.IsRelevant(message);
+        public bool IsRelevant(BotMessage message) => CurrentState.IsRelevant(message);
 
         /// <inheritdoc/>
-        public async Task<ProcessResult> ProcessAsync(Message message)
+        public async Task<ProcessResult> ProcessAsync(BotMessage message)
         {
             var response = await CurrentState.ProcessAsync(message).ConfigureAwait(false);
+            response.Sender = message.Sender;
+
             if (response.Markup != null)
                 await SendResponseWithMarkup(response).ConfigureAwait(false);
+            else
+                await SendResponse(response).ConfigureAwait(false);
 
-            await SendResponse(response).ConfigureAwait(false);
             SaveContext(message, response);
-
             return new ProcessResult { IsFinal = CurrentState.IsFinal };
         }
 
@@ -58,7 +63,7 @@
         /// </summary>
         /// <param name="response">The response to send.</param>
         /// <returns>The task that represents the process of sending the response.</returns>
-        private async Task SendResponse(Message response)
+        private async Task SendResponse(BotMessage response)
         {
             var senderId = response.Sender.Id;
             response.MessageId = await _responder.SendMessageAsync(senderId, response.Text).ConfigureAwait(false);
@@ -69,7 +74,7 @@
         /// </summary>
         /// <param name="response">The response to send.</param>
         /// <returns>The task that represents the process of sending the response.</returns>
-        private async Task SendResponseWithMarkup(Message response)
+        private async Task SendResponseWithMarkup(BotMessage response)
         {
             var senderId = response.Sender.Id;
             var responseMarkup = MessageConverter.ConvertMarkup(response.Markup);
@@ -81,7 +86,7 @@
         /// </summary>
         /// <param name="message">The received message.</param>
         /// <param name="response">The generated response message.</param>
-        private void SaveContext(Message message, Message response)
+        private void SaveContext(BotMessage message, BotMessage response)
         {
             Context.LastMessage = message;
             Context.LastResponse = response;

@@ -3,7 +3,7 @@
     /// <summary>
     /// Describes the message sender.
     /// </summary>
-    internal class MessageSender
+    public class MessageSender
     {
         /// <summary>
         /// Gets or sets the message sender identifier.

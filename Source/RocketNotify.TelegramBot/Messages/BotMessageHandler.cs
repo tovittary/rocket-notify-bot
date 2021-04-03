@@ -5,7 +5,8 @@
 
     using Microsoft.Extensions.Logging;
 
-    using RocketNotify.TelegramBot.Client;
+    using RocketNotify.TelegramBot.MessageProcessing;
+    using RocketNotify.TelegramBot.MessageProcessing.Model;
     using RocketNotify.TelegramBot.Messages.Filtration.Factory;
 
     using Telegram.Bot.Types;
@@ -21,9 +22,9 @@
         private readonly IMessageFilterFactory _messageFilterFactory;
 
         /// <summary>
-        /// Messages processing module.
+        /// The invoker of message processing.
         /// </summary>
-        private readonly IBotMessageProcessor _processor;
+        private readonly IMessageProcessorInvoker _processor;
 
         /// <summary>
         /// Logger.
@@ -34,9 +35,9 @@
         /// Initializes a new instance of the <see cref="BotMessageHandler"/> class.
         /// </summary>
         /// <param name="messageFilterFactory">The factory used for obtaining the message filters.</param>
-        /// <param name="processor">Messages processing module.</param>
+        /// <param name="processor">The invoker of message processing.</param>
         /// <param name="logger">Logger.</param>
-        public BotMessageHandler(IMessageFilterFactory messageFilterFactory, IBotMessageProcessor processor, ILogger<BotMessageHandler> logger)
+        public BotMessageHandler(IMessageFilterFactory messageFilterFactory, IMessageProcessorInvoker processor, ILogger<BotMessageHandler> logger)
         {
             _messageFilterFactory = messageFilterFactory;
             _processor = processor;
@@ -44,7 +45,7 @@
         }
 
         /// <inheritdoc/>
-        public Task HandleAsync(Message message, ITelegramMessageSender messageSender)
+        public Task HandleAsync(Message message)
         {
             LogMessage(message);
 
@@ -52,7 +53,8 @@
             if (!shouldHandleMessage)
                 return Task.CompletedTask;
 
-            return _processor.ProcessMessageAsync(message, messageSender);
+            var converted = MessageConverter.Convert(message);
+            return _processor.InvokeAsync(converted);
         }
 
         /// <summary>

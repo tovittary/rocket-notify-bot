@@ -5,7 +5,7 @@
     /// <summary>
     /// Describes a message.
     /// </summary>
-    internal class Message
+    public class BotMessage
     {
         /// <summary>
         /// Gets or sets the message identifier.

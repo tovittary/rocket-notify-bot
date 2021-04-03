@@ -13,7 +13,7 @@
     /// If it is available, then the message sender will be subscribed.
     /// If not - then the response message will be sent with a request for a subscription key.
     /// </summary>
-    internal class InitialSubscribeState : IConfigurableMessageProcessingState
+    public class InitialSubscribeState : IConfigurableMessageProcessingState
     {
         /// <summary>
         /// The text of the command.
@@ -31,6 +31,11 @@
         private readonly Func<VerifySubscriptionState> _getVerifySubscriptionState;
 
         /// <summary>
+        /// A delegate used for obtaining an instance of the <see cref="SubscriptionCompleteState"/> class.
+        /// </summary>
+        private readonly Func<SubscriptionCompleteState> _getSubscriptionCompleteState;
+
+        /// <summary>
         /// The message processor.
         /// </summary>
         private IStatefulMessageProcessor _processor;
@@ -40,20 +45,22 @@
         /// </summary>
         /// <param name="subscriptionService">Notifications subscriptions management service.</param>
         /// <param name="getVerifySubscriptionState">A delegate used for obtaining an instance of the <see cref="VerifySubscriptionState"/> class.</param>
-        public InitialSubscribeState(ISubscriptionService subscriptionService, Func<VerifySubscriptionState> getVerifySubscriptionState)
+        /// <param name="getSubscriptionCompleteState">A delegate used for obtaining an instance of the <see cref="SubscriptionCompleteState"/> class.</param>
+        public InitialSubscribeState(ISubscriptionService subscriptionService, Func<VerifySubscriptionState> getVerifySubscriptionState, Func<SubscriptionCompleteState> getSubscriptionCompleteState)
         {
             _subscriptionService = subscriptionService;
             _getVerifySubscriptionState = getVerifySubscriptionState;
+            _getSubscriptionCompleteState = getSubscriptionCompleteState;
         }
 
         /// <inheritdoc/>
         public bool IsFinal => false;
 
         /// <inheritdoc/>
-        public bool IsRelevant(Message message) => message.Text.Contains(CommandText, StringComparison.InvariantCultureIgnoreCase);
+        public bool IsRelevant(BotMessage message) => message.Text.Contains(CommandText, StringComparison.InvariantCultureIgnoreCase);
 
         /// <inheritdoc/>
-        public async Task<Message> ProcessAsync(Message message)
+        public async Task<BotMessage> ProcessAsync(BotMessage message)
         {
             try
             {
@@ -61,11 +68,13 @@
             }
             catch (SubscriberAlreadyExistsException)
             {
-                return new Message { Text = "This chat already subscribed." };
+                SetSubscriptionCompletedState();
+                return new BotMessage { Text = "This chat already subscribed." };
             }
             catch (SubscriberOperationException)
             {
-                return new Message { Text = "Failed to subscribe. Try again later." };
+                SetSubscriptionCompletedState();
+                return new BotMessage { Text = "Failed to subscribe. Try again later." };
             }
         }
 
@@ -77,7 +86,7 @@
         /// </summary>
         /// <param name="message">The message to process.</param>
         /// <returns>The response to the message.</returns>
-        private Task<Message> DoProcessAsync(Message message)
+        private Task<BotMessage> DoProcessAsync(BotMessage message)
         {
             var secretIsNeeded = _subscriptionService.CheckSubscriptionKeyNeeded();
             return secretIsNeeded ? RequestSubscriptionKeyAsync() : SubscribeSenderAsync(message);
@@ -87,23 +96,13 @@
         /// Generates a response message requesting a subscription key.
         /// </summary>
         /// <returns>The response to the message.</returns>
-        private Task<Message> RequestSubscriptionKeyAsync()
+        private Task<BotMessage> RequestSubscriptionKeyAsync()
         {
             var replyMarkup = new ForceReplyMarkup();
-            var result = new Message { Text = "Provide the subscription key in the reply message to complete the process.", Markup = replyMarkup };
+            var result = new BotMessage { Text = "Provide the subscription key in the reply message to complete the process.", Markup = replyMarkup };
 
-            UpdateProcessorState();
-
+            SetVerifySubscriptionState();
             return Task.FromResult(result);
-        }
-
-        /// <summary>
-        /// Updates the current message processor state.
-        /// </summary>
-        private void UpdateProcessorState()
-        {
-            var newState = _getVerifySubscriptionState();
-            _processor.ChangeCurrentState(newState);
         }
 
         /// <summary>
@@ -111,12 +110,31 @@
         /// </summary>
         /// <param name="message">The message being processed.</param>
         /// <returns>The response to the message.</returns>
-        private async Task<Message> SubscribeSenderAsync(Message message)
+        private async Task<BotMessage> SubscribeSenderAsync(BotMessage message)
         {
             var senderId = message.Sender.Id;
             await _subscriptionService.AddSubscriptionAsync(senderId, string.Empty).ConfigureAwait(false);
 
-            return new Message { Text = "Successfully subscribed." };
+            SetSubscriptionCompletedState();
+            return new BotMessage { Text = "Successfully subscribed." };
+        }
+
+        /// <summary>
+        /// Sets the message processor to a state that signals about the necessity of the subscription verification.
+        /// </summary>
+        private void SetVerifySubscriptionState()
+        {
+            var newState = _getVerifySubscriptionState();
+            _processor.ChangeCurrentState(newState);
+        }
+
+        /// <summary>
+        /// Sets the message processor to a state that signals about the completion of the subscription process
+        /// </summary>
+        private void SetSubscriptionCompletedState()
+        {
+            var newState = _getSubscriptionCompleteState();
+            _processor.ChangeCurrentState(newState);
         }
     }
 }

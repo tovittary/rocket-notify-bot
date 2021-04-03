@@ -7,7 +7,7 @@
     /// <summary>
     /// Provides operations for processing the message.
     /// </summary>
-    internal interface IMessageProcessingState
+    public interface IMessageProcessingState
     {
         /// <summary>
         /// Gets a value indicating whether the state is final.
@@ -19,13 +19,13 @@
         /// </summary>
         /// <param name="message">The message to check.</param>
         /// <returns><c>true</c> if the message can be processed in this state, <c>false</c> otherwise.</returns>
-        bool IsRelevant(Message message);
+        bool IsRelevant(BotMessage message);
 
         /// <summary>
         /// Processes the provided message as an async operation.
         /// </summary>
         /// <param name="message">The message to process.</param>
         /// <returns>A task object containing the response to the message.</returns>
-        Task<Message> ProcessAsync(Message message);
+        Task<BotMessage> ProcessAsync(BotMessage message);
     }
 }

@@ -5,19 +5,26 @@
     /// <summary>
     /// Provides functionality of storing message processors.
     /// </summary>
-    internal interface IMessageProcessorStorage
+    public interface IMessageProcessorStorage
     {
         /// <summary>
         /// Adds the message processor to the storage.
         /// </summary>
         /// <param name="processor">The processor to store.</param>
-        void StoreProcessor(IStatefulMessageProcessor processor);
+        void StoreProcessor(IMessageProcessor processor);
 
         /// <summary>
         /// Gets an existing processor for handling the provided message.
         /// </summary>
         /// <param name="message">The message to process.</param>
         /// <returns>An instance of the existing processor to handle the message. <c>null</c> if no such processor exists.</returns>
-        IStatefulMessageProcessor GetExisting(Message message);
+        IMessageProcessor GetExisting(BotMessage message);
+
+        /// <summary>
+        /// Checks the existance of a message processor awaiting the provided message.
+        /// </summary>
+        /// <param name="message">The message to check.</param>
+        /// <returns><c>true</c> if the storage contains a message processor capable of processing the provided message, <c>false</c> otherwise.</returns>
+        bool IsRelevantToAny(BotMessage message);
     }
 }

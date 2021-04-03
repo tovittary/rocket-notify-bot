@@ -3,7 +3,7 @@
     /// <summary>
     /// Provides operations for configuring the message processing state.
     /// </summary>
-    internal interface IConfigurableMessageProcessingState : IMessageProcessingState
+    public interface IConfigurableMessageProcessingState : IMessageProcessingState
     {
         /// <summary>
         /// Sets the message processor associated with the state.

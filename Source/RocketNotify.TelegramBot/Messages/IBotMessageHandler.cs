@@ -2,8 +2,6 @@
 {
     using System.Threading.Tasks;
 
-    using RocketNotify.TelegramBot.Client;
-
     using Telegram.Bot.Types;
 
     /// <summary>
@@ -17,6 +15,6 @@
         /// <param name="message">Message instance.</param>
         /// <param name="messageSender">A service used for sending Telegram messages.</param>
         /// <returns>The task object that represents the message handling process.</returns>
-        Task HandleAsync(Message message, ITelegramMessageSender messageSender);
+        Task HandleAsync(Message message);
     }
 }

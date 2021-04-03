@@ -3,7 +3,7 @@
     /// <summary>
     /// Describes a special markup that goes with a message.
     /// </summary>
-    internal interface IMessageMarkup
+    public interface IMessageMarkup
     {
     }
 }

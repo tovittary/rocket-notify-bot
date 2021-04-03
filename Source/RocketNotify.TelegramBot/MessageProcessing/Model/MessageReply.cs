@@ -3,7 +3,7 @@
     /// <summary>
     /// Information about the message that the current message replies to.
     /// </summary>
-    internal class MessageReply
+    public class MessageReply
     {
         /// <summary>
         /// Gets or sets the replied message identifier.

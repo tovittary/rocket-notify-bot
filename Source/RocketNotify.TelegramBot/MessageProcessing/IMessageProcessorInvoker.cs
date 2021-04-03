@@ -1,17 +1,19 @@
 ﻿namespace RocketNotify.TelegramBot.MessageProcessing
 {
+    using System.Threading.Tasks;
+
     using RocketNotify.TelegramBot.MessageProcessing.Model;
 
     /// <summary>
     /// Provides functionality of invoking the message processor.
     /// </summary>
-    internal interface IMessageProcessorInvoker
+    public interface IMessageProcessorInvoker
     {
         /// <summary>
-        /// Gets the processor of handling the provided message.
+        /// Invokes message processing with an appropriate processor.
         /// </summary>
         /// <param name="message">The message that should be processed.</param>
-        /// <returns>The message processor.</returns>
-        IStatefulMessageProcessor GetProcessor(Message message);
+        /// <returns>A task representing the message processing operation.</returns>
+        Task InvokeAsync(BotMessage message);
     }
 }

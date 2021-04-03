@@ -9,7 +9,7 @@
     /// <summary>
     /// Processes the message that contains the "Start" command.
     /// </summary>
-    internal class StartCommandProcessor : IMessageProcessor
+    public class StartCommandProcessor : IMessageProcessor
     {
         /// <summary>
         /// The text of the command.
@@ -31,10 +31,10 @@
         }
 
         /// <inheritdoc/>
-        public bool IsRelevant(Message message) => message.Text.Contains(CommandText, StringComparison.InvariantCultureIgnoreCase);
+        public bool IsRelevant(BotMessage message) => message.Text.Contains(CommandText, StringComparison.InvariantCultureIgnoreCase);
 
         /// <inheritdoc/>
-        public async Task<ProcessResult> ProcessAsync(Message message)
+        public async Task<ProcessResult> ProcessAsync(BotMessage message)
         {
             var senderId = message.Sender.Id;
             var responseText = $"Hello there, friend! Now I know that your name is {message.Sender.Name}! I know everything about you...";

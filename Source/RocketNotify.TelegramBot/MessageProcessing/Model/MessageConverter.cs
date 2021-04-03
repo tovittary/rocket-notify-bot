@@ -4,19 +4,21 @@
 
     using RocketNotify.TelegramBot.MessageProcessing.Model.Markups;
 
+    using Telegram.Bot.Types;
+
     /// <summary>
-    /// Provides functionality for conversion between the <see cref="Telegram.Bot.Types.Message"/> and <see cref="Message"/> classes.
+    /// Provides functionality for conversion between the <see cref="Telegram.Bot.Types.Message"/> and <see cref="BotMessage"/> classes.
     /// </summary>
     internal static class MessageConverter
     {
         /// <summary>
-        /// Converts an instance of the <see cref="Telegram.Bot.Types.Message"/> class to an instance of the <see cref="Message"/> class.
+        /// Converts an instance of the <see cref="Telegram.Bot.Types.Message"/> class to an instance of the <see cref="BotMessage"/> class.
         /// </summary>
         /// <param name="message">The <see cref="Telegram.Bot.Types.Message"/> instance being converted.</param>
-        /// <returns>An instance of the <see cref="Message"/> class.</returns>
-        internal static Message Convert(Telegram.Bot.Types.Message message)
+        /// <returns>An instance of the <see cref="BotMessage"/> class.</returns>
+        internal static BotMessage Convert(Message message)
         {
-            var msg = new Message
+            var msg = new BotMessage
             {
                 MessageId = message.MessageId,
                 Text = message.Text,
