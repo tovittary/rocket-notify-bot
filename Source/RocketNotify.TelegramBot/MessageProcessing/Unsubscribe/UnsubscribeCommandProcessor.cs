@@ -6,12 +6,13 @@
     using RocketNotify.Subscription.Exceptions;
     using RocketNotify.Subscription.Services;
     using RocketNotify.TelegramBot.Client;
+    using RocketNotify.TelegramBot.MessageProcessing.Commands;
     using RocketNotify.TelegramBot.MessageProcessing.Model;
 
     /// <summary>
     /// Processes the message that contains "Unsubscribe" command.
     /// </summary>
-    public class UnsubscribeCommandProcessor : IMessageProcessor
+    public class UnsubscribeCommandProcessor : IMessageProcessor, ICommandDescriptionProvider
     {
         /// <summary>
         /// The text of the command.
@@ -50,8 +51,12 @@
             var responseText = await DoUnsubscribeAsync(senderId).ConfigureAwait(false);
             await _responder.SendMessageAsync(senderId, responseText).ConfigureAwait(false);
 
-            return new ProcessResult { IsFinal = true };
+            return ProcessResult.Final();
         }
+
+        /// <inheritdoc/>
+        public CommandDescription GetDescription() =>
+            new CommandDescription(CommandText, "Unsubscribe the chat from notifications");
 
         /// <summary>
         /// Unsubscribes the message sender from notifications.

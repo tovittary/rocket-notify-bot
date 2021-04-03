@@ -4,13 +4,19 @@
     using System.Threading.Tasks;
 
     using RocketNotify.TelegramBot.Client;
+    using RocketNotify.TelegramBot.MessageProcessing.Commands;
     using RocketNotify.TelegramBot.MessageProcessing.Model;
 
     /// <summary>
     /// Processes a sequence of messages related to the notifications subscription process.
     /// </summary>
-    public class SubscribeCommandProcessor : IStatefulMessageProcessor
+    public class SubscribeCommandProcessor : IStatefulMessageProcessor, ICommandDescriptionProvider
     {
+        /// <summary>
+        /// The text of the command.
+        /// </summary>
+        private const string CommandText = "/subscribe";
+
         /// <summary>
         /// The client used to send responses to messages.
         /// </summary>
@@ -57,6 +63,10 @@
             SaveContext(message, response);
             return new ProcessResult { IsFinal = CurrentState.IsFinal };
         }
+
+        /// <inheritdoc/>
+        public CommandDescription GetDescription() =>
+            new CommandDescription(CommandText, "Subscribe the chat to notifications");
 
         /// <summary>
         /// Sends the response message.

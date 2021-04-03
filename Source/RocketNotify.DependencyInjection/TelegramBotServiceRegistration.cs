@@ -7,8 +7,9 @@
 
     using RocketNotify.TelegramBot.Client;
     using RocketNotify.TelegramBot.Client.Factory;
-    using RocketNotify.TelegramBot.Commands;
     using RocketNotify.TelegramBot.MessageProcessing;
+    using RocketNotify.TelegramBot.MessageProcessing.Commands;
+    using RocketNotify.TelegramBot.MessageProcessing.Help;
     using RocketNotify.TelegramBot.MessageProcessing.Start;
     using RocketNotify.TelegramBot.MessageProcessing.Subscribe;
     using RocketNotify.TelegramBot.MessageProcessing.Unsubscribe;
@@ -25,8 +26,6 @@
         /// <inheritdoc />
         public void Register(IServiceCollection services)
         {
-            services.AddTransient<ICommand, HelpCommand>();
-
             services.AddTransient<IBotSettingsProvider, BotSettingsProvider>();
 
             RegisterMessageProcessing(services);
@@ -44,10 +43,9 @@
         /// <param name="services">Collection of service descriptors.</param>
         private void RegisterMessageProcessing(IServiceCollection services)
         {
-            services.AddTransient<IMessageProcessor, StartCommandProcessor>();
-            services.AddTransient<IMessageProcessor, UnsubscribeCommandProcessor>();
-            RegisterSubscriptionCommandProcessing(services);
-            services.AddTransient<Func<IEnumerable<IMessageProcessor>>>(sp => sp.GetServices<IMessageProcessor>);
+            RegisterSubscriptionCommandProcessingStates(services);
+            RegisterCommandsDescriptionServices(services);
+            RegisterMessageProcessors(services);
 
             services.AddSingleton<IMessageProcessorStorage, MessageProcessorStorage>();
             services.AddTransient<IMessageProcessorFactory, MessageProcessorFactory>();
@@ -55,10 +53,10 @@
         }
 
         /// <summary>
-        /// Registers subscription command processing services.
+        /// Registers subscription command processing states.
         /// </summary>
         /// <param name="services">Collection of service descriptors.</param>
-        private void RegisterSubscriptionCommandProcessing(IServiceCollection services)
+        private void RegisterSubscriptionCommandProcessingStates(IServiceCollection services)
         {
             services.AddTransient<SubscriptionCompleteState>();
             services.AddTransient<Func<SubscriptionCompleteState>>(sp => sp.GetRequiredService<SubscriptionCompleteState>);
@@ -66,8 +64,33 @@
             services.AddTransient<Func<VerifySubscriptionState>>(sp => sp.GetRequiredService<VerifySubscriptionState>);
             services.AddTransient<InitialSubscribeState>();
             services.AddTransient<Func<InitialSubscribeState>>(sp => sp.GetRequiredService<InitialSubscribeState>);
+        }
 
+        /// <summary>
+        /// Registers services used to obtain info on available commands.
+        /// </summary>
+        /// <param name="services">Collection of service descriptors.</param>
+        private void RegisterCommandsDescriptionServices(IServiceCollection services)
+        {
+            services.AddTransient<ICommandDescriptionProvider, StartCommandProcessor>();
+            services.AddTransient<ICommandDescriptionProvider, UnsubscribeCommandProcessor>();
+            services.AddTransient<ICommandDescriptionProvider, SubscribeCommandProcessor>();
+
+            services.AddSingleton<ICommandInfoAggregator, CommandInfoAggregator>();
+        }
+
+        /// <summary>
+        /// Registers message processors.
+        /// </summary>
+        /// <param name="services">Collection of service descriptors.</param>
+        private void RegisterMessageProcessors(IServiceCollection services)
+        {
+            services.AddTransient<IMessageProcessor, StartCommandProcessor>();
+            services.AddTransient<IMessageProcessor, UnsubscribeCommandProcessor>();
             services.AddTransient<IMessageProcessor, SubscribeCommandProcessor>();
+            services.AddTransient<IMessageProcessor, HelpCommandProcessor>();
+
+            services.AddTransient<Func<IEnumerable<IMessageProcessor>>>(sp => sp.GetServices<IMessageProcessor>);
         }
 
         /// <summary>
