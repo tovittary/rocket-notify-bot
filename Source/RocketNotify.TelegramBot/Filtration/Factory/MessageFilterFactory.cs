@@ -1,8 +1,10 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration.Factory
+﻿namespace RocketNotify.TelegramBot.Filtration.Factory
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using RocketNotify.TelegramBot.Filtration;
 
     /// <inheritdoc />
     public class MessageFilterFactory : IMessageFilterFactory

@@ -1,8 +1,9 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration
+﻿namespace RocketNotify.TelegramBot.Filtration
 {
     using System;
     using System.Linq;
 
+    using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Settings;
 
     using Telegram.Bot.Types;

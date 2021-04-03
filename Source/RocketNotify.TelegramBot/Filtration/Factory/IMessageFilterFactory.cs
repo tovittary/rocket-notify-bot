@@ -1,5 +1,7 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration.Factory
+﻿namespace RocketNotify.TelegramBot.Filtration.Factory
 {
+    using RocketNotify.TelegramBot.Filtration;
+
     /// <summary>
     /// Provides functionality for obtaining message filtration units.
     /// </summary>

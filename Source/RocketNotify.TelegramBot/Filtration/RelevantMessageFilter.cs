@@ -1,4 +1,4 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration
+﻿namespace RocketNotify.TelegramBot.Filtration
 {
     using RocketNotify.TelegramBot.MessageProcessing;
     using RocketNotify.TelegramBot.MessageProcessing.Model;
