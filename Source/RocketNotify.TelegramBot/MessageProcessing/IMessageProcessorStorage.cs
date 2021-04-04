@@ -8,6 +8,11 @@
     public interface IMessageProcessorStorage
     {
         /// <summary>
+        /// Gets the number of processors stored.
+        /// </summary>
+        int Count { get; }
+
+        /// <summary>
         /// Adds the message processor to the storage.
         /// </summary>
         /// <param name="processor">The processor to store.</param>

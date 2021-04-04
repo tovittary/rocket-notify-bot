@@ -9,14 +9,14 @@
     /// <summary>
     /// Provides functionality for conversion between the <see cref="Telegram.Bot.Types.Message"/> and <see cref="BotMessage"/> classes.
     /// </summary>
-    internal static class MessageConverter
+    public static class MessageConverter
     {
         /// <summary>
         /// Converts an instance of the <see cref="Telegram.Bot.Types.Message"/> class to an instance of the <see cref="BotMessage"/> class.
         /// </summary>
         /// <param name="message">The <see cref="Telegram.Bot.Types.Message"/> instance being converted.</param>
         /// <returns>An instance of the <see cref="BotMessage"/> class.</returns>
-        internal static BotMessage Convert(Message message)
+        public static BotMessage Convert(Message message)
         {
             var msg = new BotMessage
             {

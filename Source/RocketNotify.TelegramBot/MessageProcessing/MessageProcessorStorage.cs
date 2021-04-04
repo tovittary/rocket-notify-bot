@@ -16,6 +16,9 @@
         private readonly List<IMessageProcessor> _processors = new List<IMessageProcessor>();
 
         /// <inheritdoc/>
+        public int Count => _processors.Count;
+
+        /// <inheritdoc/>
         public IMessageProcessor GetExisting(BotMessage message)
         {
             var existing = _processors.FirstOrDefault(p => p.IsRelevant(message));
