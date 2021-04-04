@@ -11,6 +11,6 @@
         /// Initializes a client.
         /// </summary>
         /// <returns>A task that represents an initialization process.</returns>
-        Task Initialize();
+        Task InitializeAsync();
     }
 }

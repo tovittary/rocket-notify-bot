@@ -40,7 +40,7 @@
         {
             try
             {
-                await _telegramBot.Initialize().ConfigureAwait(false);
+                await _telegramBot.InitializeAsync().ConfigureAwait(false);
                 _telegramBot.StartPolling(cancellationToken);
             }
             catch (Exception ex)

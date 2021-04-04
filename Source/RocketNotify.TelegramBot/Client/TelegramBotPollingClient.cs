@@ -44,7 +44,7 @@
         }
 
         /// <inheritdoc />
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
             lock (_botClientFactory)
             {

@@ -60,7 +60,7 @@
         [Test]
         public async Task StartPolling_HasClient_ShouldStartReceiving()
         {
-            await _client.Initialize().ConfigureAwait(false);
+            await _client.InitializeAsync().ConfigureAwait(false);
             _client.StartPolling(CancellationToken.None);
 
             _botClientMock.Verify(x => x.StartReceiving(null, CancellationToken.None), Times.Once);
@@ -77,7 +77,7 @@
         {
             _botClientMock.Setup(x => x.IsReceiving).Returns(true);
 
-            await _client.Initialize().ConfigureAwait(false);
+            await _client.InitializeAsync().ConfigureAwait(false);
             _client.StopPolling();
 
             _botClientMock.Verify(x => x.StopReceiving(), Times.Once);
@@ -97,7 +97,7 @@
             var expectedText = "Message Text";
             var cancellationToken = CancellationToken.None;
 
-            await _client.Initialize().ConfigureAwait(false);
+            await _client.InitializeAsync().ConfigureAwait(false);
             _client.StartPolling(cancellationToken);
             var sentMessageId = await _client.SendMessageAsync(chatId, expectedText).ConfigureAwait(false);
 

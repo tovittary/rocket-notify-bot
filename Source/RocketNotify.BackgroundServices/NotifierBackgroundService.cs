@@ -82,7 +82,7 @@
 
             try
             {
-                await _telegramClient.Initialize().ConfigureAwait(false);
+                await _telegramClient.InitializeAsync().ConfigureAwait(false);
                 await _rocketChatClient.InitializeAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
