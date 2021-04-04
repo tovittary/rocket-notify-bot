@@ -12,9 +12,12 @@
 
     using RocketNotify.BackgroundServices.Settings;
     using RocketNotify.ChatClient;
+    using RocketNotify.ChatClient.Exceptions;
     using RocketNotify.Subscription.Model;
     using RocketNotify.Subscription.Services;
     using RocketNotify.TelegramBot.Client;
+
+    using Telegram.Bot.Exceptions;
 
     [TestFixture]
     public class NotifierBackgroundServiceTests
@@ -102,11 +105,41 @@
             _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ReturnsAsync(() => ++counter < 3 ? default : currentDateTime);
 
             await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
-            await Task.Delay(30).ConfigureAwait(false);
+            await Task.Delay(50).ConfigureAwait(false);
             await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
             _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.AtLeast(3));
             _messageSender.Verify(x => x.SendMessageAsync(subscriber.ChatId, It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task StartAsync_ChatClientThrowsException_ShouldAttemptTenTimesAndReturn()
+        {
+            _settingsProvider.Setup(x => x.GetMessageCheckInterval()).Returns(TimeSpan.FromMilliseconds(1));
+            _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ThrowsAsync(new RocketChatApiException("Test"));
+
+            await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
+            await Task.Delay(200).ConfigureAwait(false);
+            await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
+
+            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(10));
+        }
+
+        [Test]
+        public async Task StartAsync_TelegramClientThrowsException_ShouldAttemptTenTimesAndReturn()
+        {
+            var subscriber = new Subscriber { ChatId = 1 };
+            _subscriptionService.Setup(x => x.GetAllSubscriptionsAsync()).ReturnsAsync(new[] { subscriber });
+            _settingsProvider.Setup(x => x.GetMessageCheckInterval()).Returns(TimeSpan.FromMilliseconds(1));
+            _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ReturnsAsync(() => DateTime.Now);
+            _messageSender.Setup(x => x.SendMessageAsync(It.IsAny<long>(), It.IsAny<string>())).ThrowsAsync(new ApiRequestException("Test"));
+
+            await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
+            await Task.Delay(200).ConfigureAwait(false);
+            await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
+
+            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(11));
+            _messageSender.Verify(x => x.SendMessageAsync(It.IsAny<long>(), It.IsAny<string>()), Times.Exactly(10));
         }
     }
 }
