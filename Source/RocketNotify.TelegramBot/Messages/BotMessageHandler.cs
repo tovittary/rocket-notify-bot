@@ -5,9 +5,9 @@
 
     using Microsoft.Extensions.Logging;
 
+    using RocketNotify.TelegramBot.Filtration.Factory;
     using RocketNotify.TelegramBot.MessageProcessing;
     using RocketNotify.TelegramBot.MessageProcessing.Model;
-    using RocketNotify.TelegramBot.Messages.Filtration.Factory;
 
     using Telegram.Bot.Types;
 

@@ -1,8 +1,9 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration
+﻿namespace RocketNotify.TelegramBot.Filtration
 {
     using System;
     using System.Linq;
 
+    using RocketNotify.TelegramBot.Messages;
     using RocketNotify.TelegramBot.Settings;
 
     using Telegram.Bot.Types;
@@ -41,10 +42,7 @@
 
             var botUserName = _settingProvider.GetBotUserName();
             if (string.IsNullOrEmpty(botUserName))
-            {
-                // TODO Logging
                 throw new InvalidOperationException("The bot name must be provided for it to accept commands from group chats");
-            }
 
             var entities = message.GetEntities();
             var mentions = entities.Where(entity => entity.Type == MessageEntityType.Mention);

@@ -1,4 +1,4 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration
+﻿namespace RocketNotify.TelegramBot.Filtration
 {
     /// <summary>
     /// An interface that provides operations for configuring the message filters chain.

@@ -1,12 +1,11 @@
-﻿namespace RocketNotify.TelegramBot.Messages.Filtration
+﻿namespace RocketNotify.TelegramBot.Filtration
 {
     using Telegram.Bot.Types;
-    using Telegram.Bot.Types.Enums;
 
     /// <summary>
-    /// Filters a message based on the type of chat it came from.
+    /// Filters a message based on its type.
     /// </summary>
-    public class ChatTypeMessageFilter : IChainedMessageFilter
+    public class MessageTypeMessageFilter : IChainedMessageFilter
     {
         /// <summary>
         /// Next message filter.
@@ -16,7 +15,7 @@
         /// <inheritdoc/>
         public bool Filter(Message message)
         {
-            if (message.Chat.Type == ChatType.Supergroup || message.Chat.Type == ChatType.Channel)
+            if (message.Type != Telegram.Bot.Types.Enums.MessageType.Text)
                 return false;
 
             return _nextFilter.Filter(message);

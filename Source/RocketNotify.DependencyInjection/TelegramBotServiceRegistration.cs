@@ -7,6 +7,8 @@
 
     using RocketNotify.TelegramBot.Client;
     using RocketNotify.TelegramBot.Client.Factory;
+    using RocketNotify.TelegramBot.Filtration;
+    using RocketNotify.TelegramBot.Filtration.Factory;
     using RocketNotify.TelegramBot.MessageProcessing;
     using RocketNotify.TelegramBot.MessageProcessing.Commands;
     using RocketNotify.TelegramBot.MessageProcessing.Help;
@@ -15,8 +17,6 @@
     using RocketNotify.TelegramBot.MessageProcessing.Unsubscribe;
     using RocketNotify.TelegramBot.MessageProcessing.Unsupported;
     using RocketNotify.TelegramBot.Messages;
-    using RocketNotify.TelegramBot.Messages.Filtration;
-    using RocketNotify.TelegramBot.Messages.Filtration.Factory;
     using RocketNotify.TelegramBot.Settings;
 
     /// <summary>

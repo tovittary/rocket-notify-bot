@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RocketNotify.TelegramBot\RocketNotify.TelegramBot.csproj" />
+    <AdditionalFiles Include="..\..\stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\stylecop.json" />
+    <ProjectReference Include="..\..\RocketNotify.BackgroundServices\RocketNotify.BackgroundServices.csproj" />
   </ItemGroup>
 
 </Project>
