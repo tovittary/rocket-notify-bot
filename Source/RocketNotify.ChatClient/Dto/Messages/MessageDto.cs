@@ -25,5 +25,11 @@
         /// </summary>
         [JsonPropertyName("msg")]
         public string Message { get; set; }
+
+        /// <summary>
+        /// Gets or sets user mentions in the message.
+        /// </summary>
+        [JsonPropertyName("mentions")]
+        public MentionDto[] Mentions { get; set; }
     }
 }

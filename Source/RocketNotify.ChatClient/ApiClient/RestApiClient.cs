@@ -24,7 +24,7 @@
         /// <summary>
         /// API request string template for getting the last group chat message.
         /// </summary>
-        private const string MessagesApiTemplate = "/api/v1/groups.messages?count=1&roomName={0}";
+        private const string MessagesApiTemplate = "/api/v1/groups.messages?count={0}&roomName={1}";
 
         /// <summary>
         /// Authentication request URL string.
@@ -84,17 +84,24 @@
         /// <inheritdoc />
         public async Task<MessageDto> GetLastMessageInGroupAsync(string groupName)
         {
+            var messages = await GetLastMessagesInGroupAsync(groupName, 1).ConfigureAwait(false);
+            return messages.FirstOrDefault();
+        }
+
+        /// <inheritdoc/>
+        public async Task<MessageDto[]> GetLastMessagesInGroupAsync(string groupName, int count)
+        {
             if (AuthData == null)
                 throw new InvalidOperationException("The client not authenticated.");
 
-            var messagesQueryUrl = string.Format(MessagesApiTemplate, groupName);
+            var messagesQueryUrl = string.Format(MessagesApiTemplate, count, groupName);
 
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, messagesQueryUrl);
             requestMessage.Headers.Add("X-Auth-Token", AuthData.AuthToken);
             requestMessage.Headers.Add("X-User-Id", AuthData.UserId);
 
             var messages = await SendAsync<MessagesDto>(requestMessage).ConfigureAwait(false);
-            return messages.Messages.FirstOrDefault();
+            return messages.Messages;
         }
 
         /// <summary>

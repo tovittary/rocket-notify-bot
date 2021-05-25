@@ -10,6 +10,9 @@ dotnet_sort_system_directives_first = true
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = none
 
+# SA1124: Do not use regions
+dotnet_diagnostic.SA1124.severity = none
+
 # SA1309: Field names should not begin with underscore
 dotnet_diagnostic.SA1309.severity = none
 
