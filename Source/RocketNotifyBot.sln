@@ -38,7 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.Logging", "Roc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.BackgroundServices.Tests", "Tests\RocketNotify.BackgroundServices.Tests\RocketNotify.BackgroundServices.Tests.csproj", "{352CB6B0-9FA9-41C7-90E3-A32C79DF50CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RocketNotify.ChatClient.IntegrationTests", "Tests\RocketNotify.ChatClient.IntegrationTests\RocketNotify.ChatClient.IntegrationTests.csproj", "{6F24953B-19A0-4BA1-8E71-5D7272C4D86B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketNotify.ChatClient.IntegrationTests", "Tests\RocketNotify.ChatClient.IntegrationTests\RocketNotify.ChatClient.IntegrationTests.csproj", "{6F24953B-19A0-4BA1-8E71-5D7272C4D86B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RocketNotify.Notification", "RocketNotify.Notification\RocketNotify.Notification.csproj", "{3E8FFBB3-DA25-43BF-80C5-C5BBBF87E0B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,10 @@ Global
 		{6F24953B-19A0-4BA1-8E71-5D7272C4D86B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F24953B-19A0-4BA1-8E71-5D7272C4D86B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F24953B-19A0-4BA1-8E71-5D7272C4D86B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E8FFBB3-DA25-43BF-80C5-C5BBBF87E0B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E8FFBB3-DA25-43BF-80C5-C5BBBF87E0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E8FFBB3-DA25-43BF-80C5-C5BBBF87E0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E8FFBB3-DA25-43BF-80C5-C5BBBF87E0B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
