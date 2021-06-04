@@ -31,11 +31,11 @@
         Task<MessageDto> GetLastMessageInGroupAsync(string groupName);
 
         /// <summary>
-        /// Gets the latest messages in a group chat with the specified name.
+        /// Gets recent messages in a group chat with the specified name.
         /// </summary>
         /// <param name="groupName">Group chat name.</param>
         /// <param name="count">Number of messages to get.</param>
         /// <returns>Chat messages.</returns>
-        Task<MessageDto[]> GetLastMessagesInGroupAsync(string groupName, int count);
+        Task<MessageDto[]> GetRecentMessagesInGroupAsync(string groupName, int count);
     }
 }

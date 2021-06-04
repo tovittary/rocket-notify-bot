@@ -59,9 +59,9 @@
         }
 
         [Test]
-        public async Task GetLastMessagesInGroupAsync_ShouldReturnLastMessages()
+        public async Task GetRecentMessagesInGroupAsync_ShouldReturnLastMessages()
         {
-            var message = await _client.GetLastMessagesInGroupAsync(_groupChatName, 10).ConfigureAwait(false);
+            var message = await _client.GetRecentMessagesInGroupAsync(_groupChatName, 10).ConfigureAwait(false);
 
             Assert.NotNull(message);
         }

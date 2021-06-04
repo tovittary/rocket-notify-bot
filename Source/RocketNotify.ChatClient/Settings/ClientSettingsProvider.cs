@@ -58,5 +58,8 @@
 
             return groupName;
         }
+
+        /// <inheritdoc />
+        public int GetRequestedMessageCount() => 10;
     }
 }

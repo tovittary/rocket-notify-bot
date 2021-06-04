@@ -84,12 +84,12 @@
         /// <inheritdoc />
         public async Task<MessageDto> GetLastMessageInGroupAsync(string groupName)
         {
-            var messages = await GetLastMessagesInGroupAsync(groupName, 1).ConfigureAwait(false);
+            var messages = await GetRecentMessagesInGroupAsync(groupName, 1).ConfigureAwait(false);
             return messages.FirstOrDefault();
         }
 
         /// <inheritdoc/>
-        public async Task<MessageDto[]> GetLastMessagesInGroupAsync(string groupName, int count)
+        public async Task<MessageDto[]> GetRecentMessagesInGroupAsync(string groupName, int count)
         {
             if (AuthData == null)
                 throw new InvalidOperationException("The client not authenticated.");

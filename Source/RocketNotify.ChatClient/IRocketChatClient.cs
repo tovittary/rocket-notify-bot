@@ -3,6 +3,8 @@
     using System;
     using System.Threading.Tasks;
 
+    using RocketNotify.ChatClient.Model.Messages;
+
     /// <summary>
     /// Provides functionality for getting data from Rocket.Chat.
     /// </summary>
@@ -19,5 +21,11 @@
         /// </summary>
         /// <returns>The latest group chat message timestamp.</returns>
         Task<DateTime> GetLastMessageTimeStampAsync();
+
+        /// <summary>
+        /// Gets recent messages in a group chat.
+        /// </summary>
+        /// <returns>Recent messages in a group chat.</returns>
+        Task<Message[]> GetRecentMessagesAsync();
     }
 }

@@ -34,5 +34,11 @@
         /// </summary>
         /// <returns>The name of the group.</returns>
         string GetGroupName();
+
+        /// <summary>
+        /// Gets the number of messages to request from the Rocket.Chat group chat.
+        /// </summary>
+        /// <returns>The number of messages to request.</returns>
+        int GetRequestedMessageCount();
     }
 }
