@@ -13,8 +13,9 @@
     using RocketNotify.BackgroundServices.Settings;
     using RocketNotify.ChatClient;
     using RocketNotify.ChatClient.Exceptions;
-    using RocketNotify.Subscription.Model;
-    using RocketNotify.Subscription.Services;
+    using RocketNotify.ChatClient.Model.Messages;
+    using RocketNotify.Notification;
+    using RocketNotify.Notification.Model;
     using RocketNotify.TelegramBot.Client;
 
     using Telegram.Bot.Exceptions;
@@ -26,7 +27,7 @@
 
         private Mock<IRocketChatClient> _rocketChatClient;
 
-        private Mock<ISubscriptionService> _subscriptionService;
+        private Mock<INotificationProvider> _notificationProvider;
 
         private Mock<IServicesSettingsProvider> _settingsProvider;
 
@@ -37,14 +38,14 @@
         {
             _messageSender = new Mock<ITelegramMessageSender>();
             _rocketChatClient = new Mock<IRocketChatClient>();
-            _subscriptionService = new Mock<ISubscriptionService>();
+            _notificationProvider = new Mock<INotificationProvider>();
             _settingsProvider = new Mock<IServicesSettingsProvider>();
 
             var logger = new Mock<ILogger<NotifierBackgroundService>>();
             _backgroundService = new NotifierBackgroundService(
                 _messageSender.Object,
                 _rocketChatClient.Object,
-                _subscriptionService.Object,
+                _notificationProvider.Object,
                 logger.Object,
                 _settingsProvider.Object);
         }
@@ -95,21 +96,26 @@
         [Test]
         public async Task StartAsync_FoundNewMessage_ShouldNotify()
         {
-            var subscriber = new Subscriber { ChatId = 1 };
+            var notification = new Notification { ChatId = 1, Text = string.Empty };
             var currentDateTime = DateTime.Now;
 
             _settingsProvider.Setup(x => x.GetMessageCheckInterval()).Returns(TimeSpan.FromMilliseconds(1));
-            _subscriptionService.Setup(x => x.GetAllSubscriptionsAsync()).ReturnsAsync(new[] { subscriber });
+            _notificationProvider.Setup(x => x.GenerateNotificationsAsync(It.IsAny<MessagesData>())).ReturnsAsync(new[] { notification });
 
             var counter = 0;
-            _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ReturnsAsync(() => ++counter < 3 ? default : currentDateTime);
+            _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ReturnsAsync(() => default);
+            _rocketChatClient.Setup(x => x.GetRecentMessagesAsync()).ReturnsAsync(
+                () => ++counter < 2
+                ? Array.Empty<Message>()
+                : new Message[] { new Message { TimeStamp = currentDateTime, Mentions = Array.Empty<Mention>() } });
 
             await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(50).ConfigureAwait(false);
             await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
-            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.AtLeast(3));
-            _messageSender.Verify(x => x.SendMessageAsync(subscriber.ChatId, It.IsAny<string>()), Times.Once);
+            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(1));
+            _rocketChatClient.Verify(x => x.GetRecentMessagesAsync(), Times.AtLeast(2));
+            _messageSender.Verify(x => x.SendMessageAsync(notification.ChatId, It.IsAny<string>()), Times.Once);
         }
 
         [Test]
@@ -117,28 +123,32 @@
         {
             _settingsProvider.Setup(x => x.GetMessageCheckInterval()).Returns(TimeSpan.FromMilliseconds(1));
             _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ThrowsAsync(new RocketChatApiException("Test"));
+            _rocketChatClient.Setup(x => x.GetRecentMessagesAsync()).ThrowsAsync(new RocketChatApiException("Test"));
 
             await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(200).ConfigureAwait(false);
             await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
-            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(10));
+            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(1));
+            _rocketChatClient.Verify(x => x.GetRecentMessagesAsync(), Times.Exactly(9));
         }
 
         [Test]
         public async Task StartAsync_TelegramClientThrowsException_ShouldAttemptTenTimesAndReturn()
         {
-            var subscriber = new Subscriber { ChatId = 1 };
-            _subscriptionService.Setup(x => x.GetAllSubscriptionsAsync()).ReturnsAsync(new[] { subscriber });
+            var notification = new Notification { ChatId = 1, Text = string.Empty };
+            _notificationProvider.Setup(x => x.GenerateNotificationsAsync(It.IsAny<MessagesData>())).ReturnsAsync(new[] { notification });
             _settingsProvider.Setup(x => x.GetMessageCheckInterval()).Returns(TimeSpan.FromMilliseconds(1));
             _rocketChatClient.Setup(x => x.GetLastMessageTimeStampAsync()).ReturnsAsync(() => DateTime.Now);
+            _rocketChatClient.Setup(x => x.GetRecentMessagesAsync()).ReturnsAsync(() => new Message[] { new Message { TimeStamp = DateTime.Now, Mentions = Array.Empty<Mention>() } });
             _messageSender.Setup(x => x.SendMessageAsync(It.IsAny<long>(), It.IsAny<string>())).ThrowsAsync(new ApiRequestException("Test"));
 
             await _backgroundService.StartAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.Delay(200).ConfigureAwait(false);
             await _backgroundService.StopAsync(CancellationToken.None).ConfigureAwait(false);
 
-            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(11));
+            _rocketChatClient.Verify(x => x.GetLastMessageTimeStampAsync(), Times.Exactly(1));
+            _rocketChatClient.Verify(x => x.GetRecentMessagesAsync(), Times.Exactly(10));
             _messageSender.Verify(x => x.SendMessageAsync(It.IsAny<long>(), It.IsAny<string>()), Times.Exactly(10));
         }
     }

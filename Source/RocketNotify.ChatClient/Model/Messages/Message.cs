@@ -1,35 +1,30 @@
-﻿namespace RocketNotify.ChatClient.Dto.Messages
+﻿namespace RocketNotify.ChatClient.Model.Messages
 {
     using System;
-    using System.Text.Json.Serialization;
 
     /// <summary>
-    /// Chat message DTO.
+    /// Chat message.
     /// </summary>
-    public class MessageDto
+    public class Message
     {
         /// <summary>
         /// Gets or sets the message identifier.
         /// </summary>
-        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the message timestamp.
         /// </summary>
-        [JsonPropertyName("ts")]
         public DateTime TimeStamp { get; set; }
 
         /// <summary>
         /// Gets or sets the message text.
         /// </summary>
-        [JsonPropertyName("msg")]
-        public string Message { get; set; }
+        public string MessageText { get; set; }
 
         /// <summary>
         /// Gets or sets user mentions in the message.
         /// </summary>
-        [JsonPropertyName("mentions")]
-        public MentionDto[] Mentions { get; set; }
+        public Mention[] Mentions { get; set; }
     }
 }

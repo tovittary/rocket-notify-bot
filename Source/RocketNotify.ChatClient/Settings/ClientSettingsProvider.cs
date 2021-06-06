@@ -58,5 +58,12 @@
 
             return groupName;
         }
+
+        /// <inheritdoc />
+        public int GetRequestedMessageCount()
+        {
+            var messageCountStr = _configuration.GetSection("RocketChat")?["RequestedMessageCount"] ?? string.Empty;
+            return int.TryParse(messageCountStr, out var messageCount) ? messageCount : 1;
+        }
     }
 }

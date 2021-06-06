@@ -67,6 +67,7 @@
             new SubscriptionServiceRegistration().Register(services);
             new TelegramBotServiceRegistration().Register(services);
             new ChatClientServiceRegistration().Register(services);
+            new NotificationServiceRegistration().Register(services);
             new BackgroundServiceRegistration().Register(services);
         }
     }
