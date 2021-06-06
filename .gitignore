@@ -1,5 +1,7 @@
 .vs
 *.csproj.user
+*.pubxml
+*.pubxml.user
 
 obj
 bin
