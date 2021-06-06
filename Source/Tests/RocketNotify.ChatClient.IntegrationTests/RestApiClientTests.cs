@@ -15,19 +15,11 @@
     [TestFixture]
     public class RestApiClientTests
     {
-        #region Rocket.Chat client settings
-
         private const string _server = "";
-
-        private const string _userName = "";
-
-        private const string _password = "";
 
         private const string _authToken = "";
 
         private const string _groupChatName = "";
-
-        #endregion
 
         private IRestApiClient _client;
 
@@ -40,13 +32,7 @@
 
             _client = new RestApiClient(httpClientWrapper, logger);
 
-            var authData = new AuthenticationData
-            {
-                User = _userName,
-                Password = _password,
-                AuthToken = _authToken
-            };
-
+            var authData = new AuthenticationData { AuthToken = _authToken };
             await _client.AuthenticateAsync(_server, authData).ConfigureAwait(false);
         }
 
