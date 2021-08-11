@@ -1,6 +1,7 @@
 ﻿namespace RocketNotify.TelegramBot.Tests.Client
 {
     using System;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@
     using RocketNotify.TelegramBot.Messages;
 
     using Telegram.Bot;
+    using Telegram.Bot.Exceptions;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
     using Telegram.Bot.Types.ReplyMarkups;
@@ -87,6 +89,15 @@
         public void SendMessageAsync_NoClient_ShouldThrowException()
         {
             Assert.ThrowsAsync<InvalidOperationException>(() => _client.SendMessageAsync(123456, string.Empty));
+        }
+
+        [Test]
+        public async Task SendMessageAsync_BotClientThrowsException_ShouldRethrowApiRequestException()
+        {
+            await _client.InitializeAsync().ConfigureAwait(false);
+
+            _botClientMock.Setup(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>())).Throws<HttpRequestException>();
+            Assert.ThrowsAsync<ApiRequestException>(() => _client.SendMessageAsync(123456, string.Empty));
         }
 
         [Test]

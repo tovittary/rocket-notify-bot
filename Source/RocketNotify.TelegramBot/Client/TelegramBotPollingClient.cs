@@ -1,6 +1,7 @@
 ﻿namespace RocketNotify.TelegramBot.Client
 {
     using System;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@
 
     using Telegram.Bot;
     using Telegram.Bot.Args;
+    using Telegram.Bot.Exceptions;
+    using Telegram.Bot.Types;
     using Telegram.Bot.Types.ReplyMarkups;
 
     /// <summary>
@@ -91,7 +94,7 @@
             if (_client == null)
                 throw new InvalidOperationException("The client is not yet initialized.");
 
-            var sentMessage = await _client.SendTextMessageAsync(chatId, text, replyMarkup: markup).ConfigureAwait(false);
+            var sentMessage = await SendTextMessageAsync(chatId, text, markup).ConfigureAwait(false);
             return sentMessage.MessageId;
         }
 
@@ -102,5 +105,25 @@
         /// <param name="e">Event arguments.</param>
         private void ProcessMessageAsync(object sender, MessageEventArgs e) =>
             _messageHandler.HandleAsync(e.Message);
+
+        /// <summary>
+        /// Sends text messages. On success, the sent Description is returned.
+        /// </summary>
+        /// <param name="chatId">The chat identifier.</param>
+        /// <param name="text">The message text.</param>
+        /// <param name="markup">Markup of the message.</param>
+        /// <returns>The description of the sent message.</returns>
+        /// <remarks>Catches <see cref="HttpRequestException"/> instances, throws <see cref="ApiRequestException"/> instead.</remarks>
+        private async Task<Message> SendTextMessageAsync(long chatId, string text, IReplyMarkup markup)
+        {
+            try
+            {
+                return await _client.SendTextMessageAsync(chatId, text, replyMarkup: markup).ConfigureAwait(false);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApiRequestException(ex.Message, ex);
+            }
+        }
     }
 }
