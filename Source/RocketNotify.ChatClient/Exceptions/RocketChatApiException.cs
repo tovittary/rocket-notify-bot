@@ -15,5 +15,14 @@
             : base(message)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RocketChatApiException"/> class.
+        /// </summary>
+        /// <param name="innerException">Source exception instance.</param>
+        public RocketChatApiException(Exception innerException)
+            : base(innerException.Message, innerException)
+        {
+        }
     }
 }
