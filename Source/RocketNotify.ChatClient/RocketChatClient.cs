@@ -2,10 +2,13 @@
 {
     using System;
     using System.Linq;
+    using System.Net.Http;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     using RocketNotify.ChatClient.ApiClient;
     using RocketNotify.ChatClient.Dto.Messages;
+    using RocketNotify.ChatClient.Exceptions;
     using RocketNotify.ChatClient.Model;
     using RocketNotify.ChatClient.Model.Messages;
     using RocketNotify.ChatClient.Settings;
@@ -73,7 +76,7 @@
             if (string.IsNullOrWhiteSpace(groupName))
                 throw new InvalidOperationException("Rocket.Chat group chat name cannot be empty.");
 
-            var lastMessage = await _restApiClient.GetLastMessageInGroupAsync(groupName).ConfigureAwait(false);
+            var lastMessage = await GetLastMessageInGroupAsync(groupName).ConfigureAwait(false);
             UpdateLastMessageTimeStamp(lastMessage);
 
             return _lastMessageTimeStamp;
@@ -104,7 +107,7 @@
         /// <returns>New chat messages.</returns>
         private async Task<MessageDto[]> GetNewMessagesAsync(string groupName, int messageCount)
         {
-            var messages = await _restApiClient.GetRecentMessagesInGroupAsync(groupName, messageCount).ConfigureAwait(false);
+            var messages = await GetRecentMessagesInGroupAsync(groupName, messageCount).ConfigureAwait(false);
             if (messages.Length == 0)
                 return messages;
 
@@ -128,6 +131,51 @@
                 return;
 
             _lastMessageTimeStamp = latestMessage.TimeStamp;
+        }
+
+        /// <summary>
+        /// Gets the latest message in a group chat with the specified name.
+        /// </summary>
+        /// <param name="groupName">Group chat name.</param>
+        /// <returns>DTO containing the latest message data.</returns>
+        /// <remarks>Catches <see cref="HttpRequestException"/> and <see cref="System.Text.Json.JsonException"/> instances, throws <see cref="RocketChatApiException"/> instead.</remarks>
+        private async Task<MessageDto> GetLastMessageInGroupAsync(string groupName)
+        {
+            try
+            {
+                return await _restApiClient.GetLastMessageInGroupAsync(groupName).ConfigureAwait(false);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new RocketChatApiException(ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new RocketChatApiException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Gets recent messages in a group chat with the specified name.
+        /// </summary>
+        /// <param name="groupName">Group chat name.</param>
+        /// <param name="count">Number of messages to get.</param>
+        /// <returns>Chat messages.</returns>
+        /// <remarks>Catches <see cref="HttpRequestException"/> and <see cref="System.Text.Json.JsonException"/> instances, throws <see cref="RocketChatApiException"/> instead.</remarks>
+        private async Task<MessageDto[]> GetRecentMessagesInGroupAsync(string groupName, int count)
+        {
+            try
+            {
+                return await _restApiClient.GetRecentMessagesInGroupAsync(groupName, count).ConfigureAwait(false);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new RocketChatApiException(ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new RocketChatApiException(ex);
+            }
         }
     }
 }

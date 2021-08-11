@@ -1,6 +1,8 @@
 ﻿namespace RocketNotify.ChatClient.Tests
 {
     using System;
+    using System.Net.Http;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     using Moq;
@@ -9,6 +11,7 @@
 
     using RocketNotify.ChatClient.ApiClient;
     using RocketNotify.ChatClient.Dto.Messages;
+    using RocketNotify.ChatClient.Exceptions;
     using RocketNotify.ChatClient.Settings;
 
     [TestFixture]
@@ -104,6 +107,20 @@
             var actual = await _rocketChatClient.GetLastMessageTimeStampAsync().ConfigureAwait(false);
 
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void GetLastMessageTimeStampAsync_ClientThrowsHttpRequestException_ShouldRethrowRocketChatApiClientException()
+        {
+            _apiClientMock.Setup(x => x.GetLastMessageInGroupAsync(It.IsAny<string>())).Throws<HttpRequestException>();
+            Assert.ThrowsAsync<RocketChatApiException>(() => _rocketChatClient.GetLastMessageTimeStampAsync());
+        }
+
+        [Test]
+        public void GetLastMessageTimeStampAsync_ClientThrowsJsonException_ShouldRethrowRocketChatApiClientException()
+        {
+            _apiClientMock.Setup(x => x.GetLastMessageInGroupAsync(It.IsAny<string>())).Throws<JsonException>();
+            Assert.ThrowsAsync<RocketChatApiException>(() => _rocketChatClient.GetLastMessageTimeStampAsync());
         }
     }
 }
